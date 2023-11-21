@@ -1,4 +1,5 @@
 from  equipy.fairness._base import BaseHelper
+from equipy.utils.checkers import _check_epsilon, _check_epsilon_size, _check_mod, _check_shape
 import numpy as np
 
 class Wasserstein(BaseHelper):
@@ -67,7 +68,7 @@ class Wasserstein(BaseHelper):
         >>> x_ssa_calib = np.array([1, 2, 0, 2])
         >>> wasserstein.fit(y_calib, x_ssa_calib)
         """
-        self._check_shape(y_calib, x_ssa_calib)
+        _check_shape(y_calib, x_ssa_calib)
 
         self.sens_val_calib = self._get_mod(self, x_ssa_calib)
         self.weights = self._get_weights(self, x_ssa_calib)
@@ -116,10 +117,10 @@ class Wasserstein(BaseHelper):
         [0.26063673 0.69140959 0.68940959 0.26663673]
         """
 
-        self._check_epsilon(epsilon)
-        self._check_shape(y_test, x_ssa_test)
+        _check_epsilon(epsilon)
+        _check_shape(y_test, x_ssa_test)
         sens_val_test = self._get_mod(self, x_ssa_test)
-        self._check_mod(self.sens_val_calib, sens_val_test)
+        _check_mod(self.sens_val_calib, sens_val_test)
 
         sens_loc = self._get_loc(self, x_ssa_test)
         y_fair = np.zeros_like(y_test)
@@ -194,32 +195,6 @@ class MultiWasserStein(Wasserstein):
         self.eqf_all = {}
         self.ecdf_all = {}
 
-    def _check_epsilon_size(self, epsilon, x_sa_test):
-        """
-        Check if the epsilon list matches the number of sensitive features.
-
-        Parameters
-        ----------
-        epsilon : list, shape (n_sensitive_features,)
-            Fairness parameters controlling the trade-off between fairness and accuracy for each sensitive feature.
-
-        x_sa_test : array-like, shape (n_samples, n_sensitive_features)
-            Test samples representing multiple sensitive attributes.
-
-        Raises
-        ------
-        ValueError
-            If the length of epsilon does not match the number of sensitive features.
-        """
-
-        if x_sa_test.ndim == 1:
-            if len(epsilon) != 1:
-                raise ValueError(
-                    'epsilon must have the same length than the number of sensitive features')
-        else:
-            if len(epsilon) != np.shape(x_sa_test)[1]:
-                raise ValueError(
-                    'epsilon must have the same length than the number of sensitive features')
 
     def fit(self, y_calib, x_sa_calib):
         """
@@ -305,7 +280,7 @@ class MultiWasserStein(Wasserstein):
                 epsilon = [0]
             else:
                 epsilon = [0]*np.shape(x_sa_test)[1]
-        self._check_epsilon_size(epsilon, x_sa_test)
+        _check_epsilon_size(epsilon, x_sa_test)
 
         self.y_fair_test['Base model'] = y_test
 
