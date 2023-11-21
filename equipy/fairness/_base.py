@@ -16,12 +16,6 @@ class BaseHelper():
 
     Methods
     -------
-    _check_shape(y, x_ssa)
-        Check the shape and data types of input arrays y and x_ssa.
-    _check_mod(sens_val_calib, sens_val_test)
-        Check if modalities in test data are included in calibration data's modalities.
-    _check_epsilon(epsilon)
-        Check if epsilon (fairness parameter) is within the valid range [0, 1].
     _get_mod(x_ssa)
         Get unique modalities from the input sensitive attribute array.
     _get_loc(x_ssa)
@@ -34,80 +28,13 @@ class BaseHelper():
     Notes
     -----
     This base class provides essential methods for Wasserstein distance-based fairness adjustment. It includes
-    methods for shape validation, modality checks, epsilon validation, modality extraction, localization of
-    modalities in the input data, weight calculation, and ECDF/EQF estimation with random noise.
+    methods for modality extraction, localization of modalities in the input data, weight calculation, and ECDF/EQF 
+    estimation with random noise.
     """
 
     def __init__(self):
         self.ecdf = {}
         self.eqf = {}
-
-    def _check_shape(y, x_ssa):
-        """
-        Check the shape and data types of input arrays y and x_ssa.
-
-        Parameters
-        ----------
-        y : array-like
-            Target values of the data.
-        x_ssa : array-like
-            Input samples representing the sensitive attribute.
-
-        Raises
-        ------
-        ValueError
-            If the input arrays have incorrect shapes or data types.
-        """
-        if not isinstance(x_ssa, np.ndarray):
-            raise ValueError('x_sa must be an array')
-
-        if not isinstance(y, np.ndarray):
-            raise ValueError('y must be an array')
-
-        if len(x_ssa) != len(y):
-            raise ValueError('x_sa and y should have the same length')
-
-        for el in y:
-            if not isinstance(el, float):
-                raise ValueError('y should contain only float numbers')
-
-    def _check_mod(sens_val_calib, sens_val_test):
-        """
-        Check if modalities in test data are included in calibration data's modalities.
-
-        Parameters
-        ----------
-        sens_val_calib : list
-            Modalities from the calibration data.
-        sens_val_test : list
-            Modalities from the test data.
-
-        Raises
-        ------
-        ValueError
-            If modalities in test data are not present in calibration data.
-        """
-        if not all(elem in sens_val_calib for elem in sens_val_test):
-            raise ValueError(
-                'Modalities in x_ssa_test should be included in modalities of x_sa_calib')
-
-    def _check_epsilon(epsilon):
-        """
-        Check if epsilon (fairness parameter) is within the valid range [0, 1].
-
-        Parameters
-        ----------
-        epsilon : float
-            Fairness parameter controlling the trade-off between fairness and accuracy.
-
-        Raises
-        ------
-        ValueError
-            If epsilon is outside the valid range [0, 1].
-        """
-        if epsilon < 0 or epsilon > 1:
-            raise ValueError(
-                'epsilon must be between 0 and 1')
 
     def _get_mod(self, x_ssa):
         """
