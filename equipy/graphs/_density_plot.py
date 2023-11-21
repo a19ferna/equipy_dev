@@ -1,15 +1,10 @@
-import numpy as np
 import pandas as pd
-import copy
 import matplotlib.pyplot as plt
 import seaborn as sns
-from fairness.wasserstein import MultiWasserStein
-import itertools
 
-## density functions##
+## Density functions ##
 
-
-def viz_fairness_distrib(y_fair_test, x_sa_test):
+def fairness_density_plot(y_fair_test, x_sa_test):
     """
     Visualizes the distribution of predictions based on different sensitive features using kernel density estimates (KDE).
 

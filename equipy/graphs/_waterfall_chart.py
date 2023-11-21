@@ -1,6 +1,9 @@
 
-## Waterfall##
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
+## Waterfall ##
 
 # Adapted from: https://github.com/microsoft/waterfall_ax/blob/main/waterfall_ax/waterfall_ax.py
 class WaterfallChart():

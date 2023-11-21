@@ -1,0 +1,1 @@
+from equipy.graphs import waterfall_plot, viz_fairness_distrib, fairness_density_plot
