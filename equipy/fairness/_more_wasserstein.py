@@ -4,8 +4,6 @@ from equipy.fairness._wasserstein import MultiWasserStein
 from equipy.metrics._performance_metrics import performance_dict
 from sklearn.metrics import mean_squared_error
 
-## BASE FOR PERMUTATION CALCULATION ##
-
 def permutations_cols(x_sa):
     """
     Generate permutations of columns in the input array x_sa.
@@ -33,9 +31,9 @@ def permutations_cols(x_sa):
     dict_all_combs = {}
     for permutation in permut_cols:
         permuted_x_sa = x_sa_with_ind[:, permutation]
-        # First row as the key (converted to tuple)
+        
         key = tuple(permuted_x_sa[0])
-        # Other rows as values (converted to list)
+     
         values = permuted_x_sa[1:].tolist()
         dict_all_combs[key] = values
 
@@ -92,7 +90,7 @@ def calculate_perm_wst(y_calib, x_sa_calib, y_test, x_sa_test, epsilon=None):
         store_dict[key] = {key_mapping[old_key]: value for old_key, value in store_dict[key].items()}
     return store_dict
 
-### USEFUL FOR PERFORMANCE ##
+
 def performance_permutations(y_true, permut_y_fair_dict, metric=mean_squared_error):
     """
     Compute the performance values for multiple fair output datasets compared to the true labels, considering permutations.

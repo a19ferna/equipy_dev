@@ -88,7 +88,6 @@ class BaseHelper():
         sens_loc = self._get_loc(x_ssa)
         weights = {}
         for mod in self._get_mod(x_ssa):
-            # Calculate probabilities
             weights[mod] = len(sens_loc[mod])/len(x_ssa)
         return weights
 
@@ -112,7 +111,6 @@ class BaseHelper():
         sens_loc = self._get_loc(x_ssa)
         eps = np.random.uniform(-sigma, sigma, len(y))
         for mod in self._get_mod(x_ssa):
-            # Fit the ecdf and eqf objects
             self.ecdf[mod] = ECDF(y[sens_loc[mod]] +
                                   eps[sens_loc[mod]])
             self.eqf[mod] = EQF(y[sens_loc[mod]]+eps[sens_loc[mod]])

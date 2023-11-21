@@ -53,13 +53,13 @@ def arrow_plot(unfs_dict, performance_dict, permutations=False, base_model=True,
                 x[i]+np.min(x)/20, y[i]), xy=(x[i], y[i]), size=10)
             ax.scatter(x[i], y[i], label=label, marker="+", s=150)
         elif (i == len(x)-1) & (final_model):
-            # Define string with underscore.
+            
             label = f"$A_{1}$" + r"$_:$" + f"$_{i}$-fair"
             line.axes.annotate(label, xytext=(
                 x[i]+np.min(x)/20, y[i]), xy=(x[i], y[i]), size=10)
             ax.scatter(x[i], y[i], label=label, marker="*", s=150)
         elif (i == 2) & (i < len(x)-1):
-            # Define string with underscore.
+            
             label = f"$A_{sens[1]}$" + r"$_,$" + f"$_{sens[i]}$-fair"
             line.axes.annotate(label, xytext=(
                 x[i]+np.min(x)/20, y[i]), xy=(x[i], y[i]), size=10)

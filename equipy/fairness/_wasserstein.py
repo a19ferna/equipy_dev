@@ -186,7 +186,6 @@ class MultiWasserStein(Wasserstein):
         """
         super().__init__(self, sigma=sigma)
 
-        # self.y_fair_calib_all = {}
         self.y_fair_test = {}
 
         self.sens_val_calib_all = {}
@@ -220,11 +219,10 @@ class MultiWasserStein(Wasserstein):
         during the transformation process to ensure fairness in predictions.
         """
         for i, sens in enumerate(x_sa_calib.T):
-            # Create an instance of Wasserstein
             wasserstein_instance = Wasserstein(sigma=self.sigma)
             if i == 0:
                 y_calib_inter = y_calib
-            # Call the fit method from the instance
+            
             wasserstein_instance.fit(y_calib_inter, sens)
             self.sens_val_calib_all[f'sens_var_{i+1}'] = wasserstein_instance.sens_val_calib
             self.weights_all[f'sens_var_{i+1}'] = wasserstein_instance.weights
@@ -270,7 +268,7 @@ class MultiWasserStein(Wasserstein):
         >>> wasserstein.fit(y_calib, x_sa_calib)
         >>> y_test = [0.8, 0.35, 0.23, 0.2]
         >>> x_sa_test = np.array([['blue', 9], ['blue', 5], ['blue', 5], ['green', 9]])
-        >>> epsilon = [0.1, 0.2]  # Fairness trade-off values for each sensitive feature
+        >>> epsilon = [0.1, 0.2] 
         >>> fair_predictions = wasserstein.transform(y_test, x_sa_test, epsilon=epsilon)
         >>> print(fair_predictions)
         [0.7015008  0.37444565 0.37204565 0.37144565]
@@ -324,7 +322,7 @@ class MultiWasserStein(Wasserstein):
         >>> wasserstein.fit(y_calib, x_sa_calib)
         >>> y_test = np.array([0.8, 0.35, 0.23, 0.2])
         >>> x_sa_test = np.array([['blue', 9], ['blue', 5], ['blue', 5], ['green', 9]])
-        >>> epsilon = [0.1, 0.2]  # Fairness trade-off values for each sensitive feature
+        >>> epsilon = [0.1, 0.2]  
         >>> fair_predictions = wasserstein.transform(y_test, x_sa_test, epsilon=epsilon)
         >>> sequential_fairness = wasserstein.get_sequential_fairness()
         >>> print(sequential_fairness)

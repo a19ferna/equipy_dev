@@ -2,8 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-## Density functions ##
-
 def fairness_density_plot(y_fair_test, x_sa_test):
     """
     Visualizes the distribution of predictions based on different sensitive features using kernel density estimates (KDE).
@@ -71,6 +69,5 @@ def fairness_density_plot(y_fair_test, x_sa_test):
                         plt.legend()
                     plt.title(title, fontsize=11)
 
-    # Set plot labels and title
     plt.xlabel('Prediction')
     plt.ylabel('Density')
