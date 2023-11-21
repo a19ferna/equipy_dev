@@ -212,9 +212,14 @@ class MultiWasserStein(Wasserstein):
             If the length of epsilon does not match the number of sensitive features.
         """
 
-        if len(epsilon) != len(x_sa_test.T):
-            raise ValueError(
-                'epsilon must have the same length than the number of sensitive features')
+        if x_sa_test.ndim == 1:
+            if len(epsilon) != 1:
+                raise ValueError(
+                    'epsilon must have the same length than the number of sensitive features')
+        else:
+            if len(epsilon) != np.shape(x_sa_test)[1]:
+                raise ValueError(
+                    'epsilon must have the same length than the number of sensitive features')
 
     def fit(self, y_calib, x_sa_calib):
         """
@@ -296,7 +301,10 @@ class MultiWasserStein(Wasserstein):
         [0.7015008  0.37444565 0.37204565 0.37144565]
         """
         if epsilon == None:
-            epsilon = [0]*len(x_sa_test.T)
+            if x_sa_test.ndim == 1:
+                epsilon = [0]
+            else:
+                epsilon = [0]*np.shape(x_sa_test)[1]
         self._check_epsilon_size(epsilon, x_sa_test)
 
         self.y_fair_test['Base model'] = y_test
