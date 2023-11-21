@@ -1,6 +1,19 @@
 import numpy as np 
 
 def _check_metric(y_true):
+    """
+    Check that it is regression and not classification.
+
+    Parameters
+    ----------
+    y_true : array-like
+        True values of the data.
+    
+    Raises
+    ------
+    Warning 
+        If it is classification.
+    """
     if np.all(np.isin(y_true, [0,1])):
         raise Warning("You used mean squared error as metric but it looks like you are using classification scores")
     
