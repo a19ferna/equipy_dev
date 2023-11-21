@@ -1,6 +1,7 @@
 import numpy as np
 import itertools
 from equipy.fairness._wasserstein import MultiWasserStein
+from equipy.metrics._performance_metrics import performance
 
 def permutations_cols(x_sa):
     """
@@ -87,3 +88,29 @@ def calculate_perm_wst(y_calib, x_sa_calib, y_test, x_sa_test, epsilon=None):
         key_mapping = dict(zip(old_keys, new_keys))
         store_dict[key] = {key_mapping[old_key]: value for old_key, value in store_dict[key].items()}
     return store_dict
+
+def performance_permutations(y_true, permut_y_fair_dict, classif=False):
+    """
+    Compute the performance values for multiple fair output datasets compared to the true labels, considering permutations.
+
+    Parameters:
+    y_true (array-like): True labels or ground truth values.
+    permut_y_fair_dict (dict): A dictionary containing permutations of fair output datasets.
+    classif (bool, optional): If True, assumes classification task and computes accuracy. 
+                              If False (default), assumes regression task and computes mean squared error.
+
+    Returns:
+    list: A list of dictionaries containing performance values for each permutation of fair output datasets.
+
+    Example:
+    >>> y_true = np.array([15, 38, 68])
+    >>> permut_y_fair_dict = {(1,2): {'Base model':np.array([19,39,65]), 'sens_var_1':np.array([22,40,50]), 'sens_var_2':np.array([28,39,42])},
+                               (2,1): {'Base model':np.array([19,39,65]), 'sens_var_2':np.array([34,39,60]), 'sens_var_1':np.array([28,39,42])}}
+    >>> performance_values = performance_multi_permutations(y_true, permut_y_fair_dict, classif=False)
+    [{'Base model': 8.666666666666666, 'sens_var_1': 125.66666666666667, 'sens_var_2': 282.0}, 
+        {'Base model': 8.666666666666666, 'sens_var_2': 142.0, 'sens_var_1': 282.0}]
+    """
+    performance_list = []
+    for key in permut_y_fair_dict.keys():
+        performance_list.append(performance(y_true, permut_y_fair_dict[key], classif))
+    return performance_list
