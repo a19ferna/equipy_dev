@@ -1,5 +1,5 @@
-from  equipy.fairness._base import BaseHelper
-from equipy.utils.checkers import _check_epsilon, _check_epsilon_size, _check_mod, _check_shape
+from  fairness._base import BaseHelper
+from utils.checkers import _check_epsilon, _check_epsilon_size, _check_mod, _check_shape
 import numpy as np
 
 class Wasserstein(BaseHelper):
