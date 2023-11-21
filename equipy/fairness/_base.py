@@ -1,5 +1,5 @@
 from statsmodels.distributions.empirical_distribution import ECDF
-from equipy.metrics._fairness_metrics import EQF
+from metrics._fairness_metrics import EQF
 import numpy as np
 
 

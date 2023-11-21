@@ -1,7 +1,7 @@
 import numpy as np
 import itertools
-from equipy.fairness._wasserstein import MultiWasserStein
-from equipy.metrics._performance_metrics import performance_dict
+from fairness._wasserstein import MultiWasserStein
+from metrics._performance_metrics import performance_dict
 from sklearn.metrics import mean_squared_error
 
 def permutations_cols(x_sa):
