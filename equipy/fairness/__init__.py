@@ -1,1 +1,1 @@
-from equipy.fairness._more_wasserstein import permutations_cols, calculate_perm_wst, performance_permutations
+from fairness._more_wasserstein import permutations_cols, calculate_perm_wst, performance_permutations

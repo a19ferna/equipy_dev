@@ -1,3 +1,3 @@
-from equipy.graphs._arrow_plot import arrow_plot, arrow_plot_permutations
-from equipy.graphs._density_plot import fairness_density_plot
-from equipy.graphs._waterfall_chart import waterfall_plot
+from graphs._arrow_plot import arrow_plot, arrow_plot_permutations
+from graphs._density_plot import fairness_density_plot
+from graphs._waterfall_chart import waterfall_plot
