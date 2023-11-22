@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 def _check_metric(y):
     """
@@ -15,7 +16,7 @@ def _check_metric(y):
         If it is classification.
     """
     if np.all(np.isin(y, [0,1])):
-        raise Warning("You used mean squared error as metric but it looks like you are using classification scores")
+        warnings.warn("You used mean squared error as metric but it looks like you are using classification scores")
     
 def _check_nb_observations(sensitive_features):
     if sensitive_features.ndim == 1 & len(sensitive_features) == 1:

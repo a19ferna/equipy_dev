@@ -11,8 +11,7 @@ class EQF:
     """
     Empirical Quantile Function (EQF) Class.
 
-    This class computes and encapsulates the Empirical Quantile Function for a given set of sample data.
-    The EQF provides an interpolation of the cumulative distribution function (CDF) based on the input data.
+    This class computes the linear interpolation of the empirical quantile function for a given set of sample data.
 
     Parameters:
     sample_data (array-like): A 1-D array or list-like object containing the sample data.
@@ -52,7 +51,6 @@ class EQF:
     def __init__(self,
                  sample_data,
                  ):
-        # définition self.interpoler, self.min_val, self.max_val
         self._calculate_eqf(sample_data)
         if len(sample_data) == 1:
             warnings.warn('One of your sample data contains a single value')
@@ -66,7 +64,7 @@ class EQF:
         """
         sorted_data = np.sort(sample_data)
         linspace = np.linspace(0, 1, num=len(sample_data))
-        # fonction d'interpolation
+        
         if len(sample_data) == 1:
             linspace = np.linspace(0, 1, num=2)
             self.interpolater = interp1d(linspace, [sorted_data[0]]*len(linspace))
@@ -83,7 +81,7 @@ class EQF:
         Compute the interpolated value for a given quantile.
 
         Parameters:
-        value_ (float): Quantile value between 0 and 1.
+        value_ (float): Array of quantile values between 0 and 1.
 
         Returns:
         float: Interpolated value corresponding to the input quantile.
@@ -94,7 +92,14 @@ class EQF:
         try:
             return self.interpolater(value_)
         except ValueError:
-            raise ValueError('Error with input value')
+            if (not isinstance(value_, np.ndarray)) and (not isinstance(value_, float)) and (not isinstance(value_, int)):
+                raise ValueError('value_ can only be an array, a float or an integer number')
+            elif (isinstance(value_, np.ndarray)) and (not (np.issubdtype(value_, np.floating) or np.issubdtype(value_, np.integer))):
+                raise ValueError('value_ should contain only float or integer numbers')
+            elif np.any(value_ < 0) or np.any(value_ > 1):
+                raise ValueError('value_ should contain only numbers between 0 and 1')
+            else :
+                raise ValueError('Error with input value')
 
 def diff_quantile(data1, data2):
     """
