@@ -5,50 +5,50 @@ from metrics._performance_metrics import performance_dict
 from metrics._fairness_metrics import unfairness_dict
 from sklearn.metrics import mean_squared_error
 
-def permutations_cols(x_sa):
+def permutations_cols(sensitive_features):
     """
-    Generate permutations of columns in the input array x_sa.
+    Generate permutations of columns in the input array sensitive_features.
 
     Parameters:
-    - x_sa (array-like): Input array where each column represents a different sensitive feature.
+    - sensitive_features (array-like): Input array where each column represents a different sensitive feature.
 
     Returns:
     dict: A dictionary where keys are tuples representing permutations of column indices,
           and values are corresponding permuted arrays of sensitive features.
 
     Example:
-    >>> x_sa = [[1, 2], [3, 4], [5, 6]]
-    >>> permutations_cols(x_sa)
+    >>> sensitive_features = [[1, 2], [3, 4], [5, 6]]
+    >>> permutations_cols(sensitive_features)
     {(0, 1): [[1, 2], [3, 4], [5, 6]], (1, 0): [[3, 4], [1, 2], [5, 6]]}
 
     Note:
     This function generates all possible permutations of columns and stores them in a dictionary.
     """
-    n = len(x_sa[0])
+    n = len(sensitive_features[0])
     ind_cols = list(range(n))
     permut_cols = list(itertools.permutations(ind_cols))
-    x_sa_with_ind = np.vstack((ind_cols, x_sa))
+    sensitive_features_with_ind = np.vstack((ind_cols, sensitive_features))
 
     dict_all_combs = {}
     for permutation in permut_cols:
-        permuted_x_sa = x_sa_with_ind[:, permutation]
+        permuted_sensitive_features = sensitive_features_with_ind[:, permutation]
         
-        key = tuple(permuted_x_sa[0])
+        key = tuple(permuted_sensitive_features[0])
      
-        values = permuted_x_sa[1:].tolist()
+        values = permuted_sensitive_features[1:].tolist()
         dict_all_combs[key] = values
 
     return dict_all_combs
 
-def calculate_perm_wst(y_calib, x_sa_calib, y_test, x_sa_test, epsilon=None):
+def calculate_perm_wst(y_calib, sensitive_features_calib, y_test, sensitive_features_test, epsilon=None):
     """
     Calculate Wasserstein distance for different permutations of sensitive features between calibration and test sets.
     
     Parameters:
     - y_calib (array-like): Calibration set predictions.
-    - x_sa_calib (array-like): Calibration set sensitive features.
+    - sensitive_features_calib (array-like): Calibration set sensitive features.
     - y_test (array-like): Test set predictions.
-    - x_sa_test (array-like): Test set sensitive features.
+    - sensitive_features_test (array-like): Test set sensitive features.
     - epsilon (array-like or None, optional): Fairness constraints. Defaults to None.
 
     Returns:
@@ -57,18 +57,18 @@ def calculate_perm_wst(y_calib, x_sa_calib, y_test, x_sa_test, epsilon=None):
 
     Example:
     >>> y_calib = [1, 2, 3]
-    >>> x_sa_calib = [[1, 2], [3, 4], [5, 6]]
+    >>> sensitive_features_calib = [[1, 2], [3, 4], [5, 6]]
     >>> y_test = [4, 5, 6]
-    >>> x_sa_test = [[7, 8], [9, 10], [11, 12]]
-    >>> calculate_perm_wst(y_calib, x_sa_calib, y_test, x_sa_test)
+    >>> sensitive_features_test = [[7, 8], [9, 10], [11, 12]]
+    >>> calculate_perm_wst(y_calib, sensitive_features_calib, y_test, sensitive_features_test)
     {(0, 1): {'Base model': 0.5, 'sens_var_1': 0.2}, (1, 0): {'Base model': 0.3, 'sens_var_0': 0.6}}
 
     Note:
     This function calculates Wasserstein distance for different permutations of sensitive features
     between calibration and test sets and stores the sequential fairness values in a dictionary.
     """
-    all_perm_calib = permutations_cols(x_sa_calib)
-    all_perm_test = permutations_cols(x_sa_test)
+    all_perm_calib = permutations_cols(sensitive_features_calib)
+    all_perm_test = permutations_cols(sensitive_features_test)
     if epsilon != None:
         all_perm_epsilon = permutations_cols(np.array([np.array(epsilon).T]))
         for key in all_perm_epsilon.keys():

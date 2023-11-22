@@ -70,7 +70,7 @@ class Wasserstein(BaseHelper):
         """
         _check_shape(y, sensitive_feature)
 
-        self.modalities_calib = self._get_mod(self, sensitive_feature)
+        self.modalities_calib = self._get_modalities(self, sensitive_feature)
         self.weights = self._get_weights(self, sensitive_feature)
         self._estimate_ecdf_eqf(self, y, sensitive_feature, self.sigma)
 
@@ -119,17 +119,17 @@ class Wasserstein(BaseHelper):
 
         _check_epsilon(epsilon)
         _check_shape(y, sensitive_feature)
-        modalities_test = self._get_mod(self, sensitive_feature)
+        modalities_test = self._get_modalities(self, sensitive_feature)
         _check_mod(self.modalities_calib, modalities_test)
 
-        sens_loc = self._get_loc(self, sensitive_feature)
+        location_modalities = self._get_location_modalities(self, sensitive_feature)
         y_fair = np.zeros_like(y)
         eps = np.random.uniform(-self.sigma, self.sigma, len(y))
         for mod1 in modalities_test:
             for mod2 in modalities_test:
-                y_fair[sens_loc[mod1]] += self.weights[mod2] * \
+                y_fair[location_modalities[mod1]] += self.weights[mod2] * \
                     self.eqf[mod2](self.ecdf[mod1](
-                        y[sens_loc[mod1]]+eps[sens_loc[mod1]]))
+                        y[location_modalities[mod1]]+eps[location_modalities[mod1]]))
 
         return (1-epsilon)*y_fair + epsilon*y
 ""

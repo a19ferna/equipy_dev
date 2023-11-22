@@ -16,9 +16,9 @@ class BaseHelper():
 
     Methods
     -------
-    _get_mod(sensitive_feature)
+    _get_modalities(sensitive_feature)
         Get unique modalities from the input sensitive attribute array.
-    _get_loc(sensitive_feature)
+    _get_location_modalities(sensitive_feature)
         Get the indices of occurrences for each modality in the input sensitive attribute array.
     _get_weights(sensitive_feature)
         Calculate weights (probabilities) for each modality based on their occurrences.
@@ -36,7 +36,7 @@ class BaseHelper():
         self.ecdf = {}
         self.eqf = {}
 
-    def _get_mod(self, sensitive_feature):
+    def _get_modalities(self, sensitive_feature):
         """
         Get unique modalities from the input sensitive attribute array.
 
@@ -52,7 +52,7 @@ class BaseHelper():
         """
         return set(sensitive_feature)
 
-    def _get_loc(self, sensitive_feature):
+    def _get_location_modalities(self, sensitive_feature):
         """
         Get the indices of occurrences for each modality in the input sensitive attribute array.
 
@@ -66,10 +66,10 @@ class BaseHelper():
         dict
             Dictionary where keys are modalities and values are arrays containing their indices.
         """
-        sens_loc = {}
-        for mod in self._get_mod(sensitive_feature):
-            sens_loc[mod] = np.where(sensitive_feature == mod)[0]
-        return sens_loc
+        location_modalities = {}
+        for modality in self._get_modalities(sensitive_feature):
+            location_modalities[modality] = np.where(sensitive_feature == modality)[0]
+        return location_modalities
 
     def _get_weights(self, sensitive_feature):
         """
@@ -85,10 +85,10 @@ class BaseHelper():
         dict
             Dictionary where keys are modalities and values are their corresponding weights.
         """
-        sens_loc = self._get_loc(sensitive_feature)
+        location_modalities = self._get_location_modalities(sensitive_feature)
         weights = {}
-        for mod in self._get_mod(sensitive_feature):
-            weights[mod] = len(sens_loc[mod])/len(sensitive_feature)
+        for modality in self._get_modalities(sensitive_feature):
+            weights[modality] = len(location_modalities[modality])/len(sensitive_feature)
         return weights
 
     def _estimate_ecdf_eqf(self, y, sensitive_feature, sigma):
@@ -108,9 +108,9 @@ class BaseHelper():
         -------
         None
         """
-        sens_loc = self._get_loc(sensitive_feature)
+        location_modalities = self._get_location_modalities(sensitive_feature)
         eps = np.random.uniform(-sigma, sigma, len(y))
-        for mod in self._get_mod(sensitive_feature):
-            self.ecdf[mod] = ECDF(y[sens_loc[mod]] +
-                                  eps[sens_loc[mod]])
-            self.eqf[mod] = EQF(y[sens_loc[mod]]+eps[sens_loc[mod]])
+        for modality in self._get_modalities(sensitive_feature):
+            self.ecdf[modality] = ECDF(y[location_modalities[modality]] +
+                                  eps[location_modalities[modality]])
+            self.eqf[modality] = EQF(y[location_modalities[modality]]+eps[location_modalities[modality]])
