@@ -112,45 +112,45 @@ def diff_quantile(data1, data2):
     return unfair_value
 
 
-def unfairness(y_predict, x_sa_test):
+def unfairness(estimator, sensitive_features):
     """
     Compute the unfairness value for a given fair output and multiple sensitive attributes data contening several modalities.
 
     Parameters:
-    y_predict (array-like): Predicted (fair or not) output data.
+    estimator (array-like): Predicted (fair or not) output data.
     x_ssa_test (array-like): Sensitive attribute data.
 
     Returns:
     float: Unfairness value in the dataset.
 
     Example:
-    >>> y_predict = np.array([5, 0, 6, 7, 9])
-    >>> x_sa_test = np.array([[1, 2, 1, 1, 2], [0, 1, 2, 1, 0]]).T
-    >>> unf = unfairness(y_predict, x_sa_test)
+    >>> estimator = np.array([5, 0, 6, 7, 9])
+    >>> sensitive_features = np.array([[1, 2, 1, 1, 2], [0, 1, 2, 1, 0]]).T
+    >>> unf = unfairness(estimator, sensitive_features)
     >>> print(unf)
     6.0
     """
     new_list = []
-    if len(np.shape(x_sa_test)) == 1:
-        sens_val = list(set(x_sa_test))
-        data1 = y_predict
+    if len(np.shape(sensitive_features)) == 1:
+        sens_val = list(set(sensitive_features))
+        data1 = estimator
         lst_unfairness = []
         for mod in sens_val:
-            data2 = y_predict[x_sa_test == mod]
+            data2 = estimator[sensitive_features == mod]
             lst_unfairness.append(diff_quantile(data1, data2))
         new_list.append(max(lst_unfairness))
     else :
-        for sens in x_sa_test.T:
+        for sens in sensitive_features.T:
             sens_val = list(set(sens))
-            data1 = y_predict
+            data1 = estimator
             lst_unfairness = []
             for mod in sens_val:
-                data2 = y_predict[sens == mod]
+                data2 = estimator[sens == mod]
                 lst_unfairness.append(diff_quantile(data1, data2))
             new_list.append(max(lst_unfairness))
     return max(new_list)
 
-def unfairness_multi(y_fair_dict, x_sa_test):
+def unfairness_multi(y_fair_dict, sensitive_features):
     """
     Compute unfairness values for multiple fair output datasets and multiple sensitive attributes datasets.
 
@@ -159,32 +159,32 @@ def unfairness_multi(y_fair_dict, x_sa_test):
             containing the fair predictions corresponding to each sensitive feature.
             Each sensitive feature's fairness adjustment is performed sequentially,
             ensuring that each feature is treated fairly relative to the previous ones.
-    x_sa_test (array-like): Sensitive attribute data.
+    sensitive_features (array-like): Sensitive attribute data.
 
     Returns:
     dict: A dictionary containing unfairness values for each level of fairness.
 
     Example:
     >>> y_fair_dict = {'Base model':np.array([19,39,65]), 'sens_var_1':np.array([22,40,50]), 'sens_var_2':np.array([28,39,42])}
-    >>> x_sa_test = np.array([['blue', 2], ['red', 9], ['green', 5]])
-    >>> unfs_dict = unfairness_multi(y_fair_dict, x_sa_test)
+    >>> sensitive_features = np.array([['blue', 2], ['red', 9], ['green', 5]])
+    >>> unfs_dict = unfairness_multi(y_fair_dict, sensitive_features)
     >>> print(unfs_dict)
     {'sens_var_0': 46.0, 'sens_var_1': 28.0, 'sens_var_2': 14.0}
     """
     unfairness_dict = {}
     for i, y_fair in enumerate(y_fair_dict.values()):
-        result = unfairness(y_fair, x_sa_test)
+        result = unfairness(y_fair, sensitive_features)
         unfairness_dict[f'sens_var_{i}'] = result
     return unfairness_dict
 
 
-def unfairness_multi_permutations(permut_y_fair_dict, all_combs_x_sa_test):
+def unfairness_multi_permutations(permut_y_fair_dict, all_combs_sensitive_features):
     """
     Compute unfairness values for multiple fair output datasets and multiple sensitive attribute datasets.
 
     Parameters:
     permut_y_fair_dict (dict): A dictionary containing permutations of fair output datasets.
-    all_combs_x_sa_test (dict): A dictionary containing combinations of columns permutations for sensitive attribute datasets.
+    all_combs_sensitive_features (dict): A dictionary containing combinations of columns permutations for sensitive attribute datasets.
 
     Returns:
     list: A list of dictionaries containing unfairness values for each permutation of fair output datasets.
@@ -192,9 +192,9 @@ def unfairness_multi_permutations(permut_y_fair_dict, all_combs_x_sa_test):
     Example:
     >>> permut_y_fair_dict = {(1,2): {'Base model':np.array([19,39,65]), 'sens_var_1':np.array([22,40,50]), 'sens_var_2':np.array([28,39,42])},
                                (2,1): {'Base model':np.array([19,39,65]), 'sens_var_2':np.array([34,39,60]), 'sens_var_1':np.array([28,39,42])}}
-    >>> all_combs_x_sa_test = {(1,2): np.array([['blue', 2], ['red', 9], ['green', 5]]),
+    >>> all_combs_sensitive_features = {(1,2): np.array([['blue', 2], ['red', 9], ['green', 5]]),
                                (2,1): np.array([[2, 'blue'], [9, 'red'], [5, 'green']])}
-    >>> unfs_list = unfairness_multi_permutations(permut_y_fair_dict, all_combs_x_sa_test)
+    >>> unfs_list = unfairness_multi_permutations(permut_y_fair_dict, all_combs_sensitive_features)
     >>> print(unfs_list)
     [{'sens_var_0': 46.0, 'sens_var_1': 28.0, 'sens_var_2': 14.0}, 
         {'sens_var_0': 46.0, 'sens_var_1': 26.0, 'sens_var_2': 14.0}]
@@ -202,5 +202,5 @@ def unfairness_multi_permutations(permut_y_fair_dict, all_combs_x_sa_test):
     unfs_list = []
     for key in permut_y_fair_dict.keys():
         unfs_list.append(unfairness_multi(
-            permut_y_fair_dict[key], np.array(all_combs_x_sa_test[key])))
+            permut_y_fair_dict[key], np.array(all_combs_sensitive_features[key])))
     return unfs_list
