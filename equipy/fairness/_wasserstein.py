@@ -1,5 +1,5 @@
 from  fairness._base import BaseHelper
-from utils.checkers import _check_epsilon, _check_epsilon_size, _check_mod, _check_shape
+from utils.checkers import _check_epsilon, _check_epsilon_size, _check_mod, _check_shape, _check_nb_observations
 import numpy as np
 
 class Wasserstein(BaseHelper):
@@ -217,6 +217,8 @@ class MultiWasserStein():
         based on the provided calibration data. These computed values are used
         during the transformation process to ensure fairness in predictions.
         """
+        _check_nb_observations(x_sa_calib)
+
         for i, sens in enumerate(x_sa_calib.T):
             wasserstein_instance = Wasserstein(sigma=self.sigma)
             if i == 0:

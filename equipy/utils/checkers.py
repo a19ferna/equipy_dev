@@ -1,4 +1,4 @@
-import numpy as np 
+import numpy as np
 
 def _check_metric(y):
     """
@@ -16,6 +16,12 @@ def _check_metric(y):
     """
     if np.all(np.isin(y, [0,1])):
         raise Warning("You used mean squared error as metric but it looks like you are using classification scores")
+    
+def _check_nb_observations(sensitive_features):
+    if sensitive_features.ndim == 1 & len(sensitive_features) == 1:
+        raise ValueError("Fairness can't be applied on a single observation")
+    if sensitive_features.ndim == 2 & np.shape(sensitive_features)[1] == 1:
+        raise ValueError("Fairness can't be applied on a single observation")
     
 def _check_shape(y, sensitive_feature):
     """
@@ -41,6 +47,9 @@ def _check_shape(y, sensitive_feature):
 
     if len(sensitive_feature) != len(y):
         raise ValueError('sensitive_features and y should have the same length')
+    
+    if len(np.unique(sensitive_feature)) == 1:
+        raise ValueError("At least one of your sensitive attributes contains only one modality and so it is already fair. Remove it from your sensitive features.")
 
     if not (np.issubdtype(y.dtype, np.floating) or np.issubdtype(y.dtype, np.integer)):
         raise ValueError('y should contain only float or integer numbers')
