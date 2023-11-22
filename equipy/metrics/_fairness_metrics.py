@@ -123,7 +123,9 @@ def diff_quantile(data1, data2):
 
 def unfairness(estimator, sensitive_features):
     """
-    Compute the unfairness value for a given fair output and multiple sensitive attributes data contening several modalities.
+    Compute the unfairness value for a given fair output (estimator) and multiple sensitive attributes data (sensitive_features) contening several modalities.
+    If there is a single sensitive feature, it calculates the maximum quantile difference between different modalities of that single sensitive feature.
+    If there are multiple sensitive features, it calculates the maximum quantile difference for each sensitive feature and then takes the maximum of these maximums.
 
     Parameters:
     estimator (array-like): Predicted (fair or not) output data.
