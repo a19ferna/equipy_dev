@@ -142,7 +142,7 @@ def unfairness(estimator, sensitive_features):
     6.0
     """
     new_list = []
-    if len(np.shape(sensitive_features)) == 1:
+    if sensitive_features.ndim == 1:
         sens_val = list(set(sensitive_features))
         data1 = estimator
         lst_unfairness = []
