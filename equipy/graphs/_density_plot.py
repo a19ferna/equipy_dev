@@ -58,7 +58,7 @@ def fairness_density_plot(y, sensitive_features):
 
         else:
             for i in range(len(sensitive_features.T)):
-                if key == f'sens_var_{i+1}':
+                if key == f'sensitive_feature_{i+1}':
                     title = key
                     plt.subplot(n_a, n_m + 1, i * (n_m+1) + 2)
                     modalities = df[f'sensitive_feature_{i+1}'].unique()
