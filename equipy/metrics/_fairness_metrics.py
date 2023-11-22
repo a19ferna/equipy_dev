@@ -144,26 +144,24 @@ def unfairness(estimator, sensitive_features):
     new_list = []
     if sensitive_features.ndim == 1:
         sens_val = list(set(sensitive_features))
-        data1 = estimator
         lst_unfairness = []
-        for mod in sens_val:
-            data2 = estimator[sensitive_features == mod]
-            lst_unfairness.append(diff_quantile(data1, data2))
+        for modality in sens_val:
+            estimator_modality = estimator[sensitive_features == modality]
+            lst_unfairness.append(diff_quantile(estimator, estimator_modality))
         new_list.append(max(lst_unfairness))
     else :
         for sens in sensitive_features.T:
             sens_val = list(set(sens))
-            data1 = estimator
             lst_unfairness = []
-            for mod in sens_val:
-                data2 = estimator[sens == mod]
-                lst_unfairness.append(diff_quantile(data1, data2))
+            for modality in sens_val:
+                estimator_modality = estimator[sens == modality]
+                lst_unfairness.append(diff_quantile(estimator, estimator_modality))
             new_list.append(max(lst_unfairness))
     return max(new_list)
 
 def unfairness_multi(y_fair_dict, sensitive_features):
     """
-    Compute unfairness values for multiple fair output datasets and multiple sensitive attributes datasets.
+    Compute unfairness values for sequentially fair output datasets and multiple sensitive attributes datasets.
 
     Parameters:
     y_fair_dict (dict): A dictionary where keys represent sensitive features and values are arrays
@@ -174,6 +172,7 @@ def unfairness_multi(y_fair_dict, sensitive_features):
 
     Returns:
     dict: A dictionary containing unfairness values for each level of fairness.
+          The level of fairness corresponds to the number of sensitive attributes to which fairness has been applied.
 
     Example:
     >>> y_fair_dict = {'Base model':np.array([19,39,65]), 'sens_var_1':np.array([22,40,50]), 'sens_var_2':np.array([28,39,42])}
