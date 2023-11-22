@@ -1,13 +1,13 @@
 from sklearn.metrics import mean_squared_error
 from utils.checkers import _check_metric
 
-def performance(y_true, y_predict, metric=mean_squared_error):
+def performance(y_true, y_pred, metric=mean_squared_error):
     """
     Compute the performance value for predicted fair output compared to the true labels.
 
     Parameters:
     y_true (array-like): True labels or ground truth values.
-    y_predict (array-like): Predicted (fair or not) output values.
+    y_pred (array-like): Predicted (fair or not) output values.
     metric (function, optional): The metric used to compute the performance, default=sklearn.metrics.mean_square_error
 
     Returns:
@@ -15,21 +15,21 @@ def performance(y_true, y_predict, metric=mean_squared_error):
 
     Example:
     >>> y_true = np.array([1, 0, 1, 1, 0])
-    >>> y_predict = np.array([0, 1, 1, 1, 0])
-    >>> classification_performance = performance(y_true, y_predict)
+    >>> y_pred = np.array([0, 1, 1, 1, 0])
+    >>> classification_performance = performance(y_true, y_pred)
     >>> print(classification_performance)
     0.6
 
     >>> y_true = [1.2, 2.5, 3.8, 4.0, 5.2]
-    >>> y_predict = [1.0, 2.7, 3.5, 4.2, 5.0]
-    >>> regression_performance = performance(y_true, y_predict)
+    >>> y_pred = [1.0, 2.7, 3.5, 4.2, 5.0]
+    >>> regression_performance = performance(y_true, y_pred)
     >>> print(regression_performance)
     0.05
     """
 
     _check_metric(y_true)
     
-    return metric(y_true, y_predict)
+    return metric(y_true, y_pred)
 
 def performance_dict(y_true, y_fair_dict, metric=mean_squared_error):
     """
