@@ -129,7 +129,7 @@ def unfairness(y, sensitive_features):
 
     Parameters:
     y (array-like): Predicted (fair or not) output data.
-    x_ssa_test (array-like): Sensitive attribute data.
+    sensitive_features (array-like): Sensitive attribute data.
 
     Returns:
     float: Unfairness value in the dataset.
@@ -143,18 +143,18 @@ def unfairness(y, sensitive_features):
     """
     new_list = []
     if sensitive_features.ndim == 1:
-        sens_val = list(set(sensitive_features))
+        modalities = list(set(sensitive_features))
         lst_unfairness = []
-        for modality in sens_val:
+        for modality in modalities:
             y_modality = y[sensitive_features == modality]
             lst_unfairness.append(diff_quantile(y, y_modality))
         new_list.append(max(lst_unfairness))
     else :
-        for sens in sensitive_features.T:
-            sens_val = list(set(sens))
+        for sensitive_feature in sensitive_features.T:
+            modalities = list(set(sensitive_feature))
             lst_unfairness = []
-            for modality in sens_val:
-                y_modality = y[sens == modality]
+            for modality in modalities:
+                y_modality = y[sensitive_feature == modality]
                 lst_unfairness.append(diff_quantile(y, y_modality))
             new_list.append(max(lst_unfairness))
     return max(new_list)
@@ -175,14 +175,14 @@ def unfairness_dict(y_fair_dict, sensitive_features):
           The level of fairness corresponds to the number of sensitive attributes to which fairness has been applied.
 
     Example:
-    >>> y_fair_dict = {'Base model':np.array([19,39,65]), 'sens_var_1':np.array([22,40,50]), 'sens_var_2':np.array([28,39,42])}
+    >>> y_fair_dict = {'Base model':np.array([19,39,65]), 'sensitive_feature_1':np.array([22,40,50]), 'sensitive_feature_2':np.array([28,39,42])}
     >>> sensitive_features = np.array([['blue', 2], ['red', 9], ['green', 5]])
     >>> unfs_dict = unfairness_multi(y_fair_dict, sensitive_features)
     >>> print(unfs_dict)
-    {'sens_var_0': 46.0, 'sens_var_1': 28.0, 'sens_var_2': 14.0}
+    {'sensitive_feature_0': 46.0, 'sensitive_feature_1': 28.0, 'sensitive_feature_2': 14.0}
     """
     unfairness_dict = {}
     for i, y_fair in enumerate(y_fair_dict.values()):
         result = unfairness(y_fair, sensitive_features)
-        unfairness_dict[f'sens_var_{i}'] = result
+        unfairness_dict[f'sensitive_feature_{i}'] = result
     return unfairness_dict

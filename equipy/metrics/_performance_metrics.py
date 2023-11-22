@@ -45,10 +45,10 @@ def performance_dict(y_true, y_fair_dict, metric=mean_squared_error):
 
     Example:
     >>> y_true = np.array([15, 38, 68])
-    >>> y_fair_dict = {'Base model':np.array([19,39,65]), 'sens_var_1':np.array([22,40,50]), 'sens_var_2':np.array([28,39,42])}
+    >>> y_fair_dict = {'Base model':np.array([19,39,65]), 'sensitive_feature_1':np.array([22,40,50]), 'sensitive_feature_2':np.array([28,39,42])}
     >>> performance_values = performance_dict(y_true, y_fair_dict)
     >>> print(performance_values)
-    {'Base model': 8.666666666666666, 'sens_var_1': 125.66666666666667, 'sens_var_2': 282.0}
+    {'Base model': 8.666666666666666, 'sensitive_feature_1': 125.66666666666667, 'sensitive_feature_2': 282.0}
     """
     performance_dict = {}
     for key in y_fair_dict.keys():
