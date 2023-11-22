@@ -16,13 +16,13 @@ class BaseHelper():
 
     Methods
     -------
-    _get_mod(x_ssa)
+    _get_mod(sensitive_feature)
         Get unique modalities from the input sensitive attribute array.
-    _get_loc(x_ssa)
+    _get_loc(sensitive_feature)
         Get the indices of occurrences for each modality in the input sensitive attribute array.
-    _get_weights(x_ssa)
+    _get_weights(sensitive_feature)
         Calculate weights (probabilities) for each modality based on their occurrences.
-    _estimate_ecdf_eqf(y, x_ssa, sigma)
+    _estimate_ecdf_eqf(y, sensitive_feature, sigma)
         Estimate ECDF and EQF for each modality, incorporating random noise within [-sigma, sigma].
 
     Notes
@@ -36,13 +36,13 @@ class BaseHelper():
         self.ecdf = {}
         self.eqf = {}
 
-    def _get_mod(self, x_ssa):
+    def _get_mod(self, sensitive_feature):
         """
         Get unique modalities from the input sensitive attribute array.
 
         Parameters
         ----------
-        x_ssa : array-like, shape (n_samples,)
+        sensitive_feature : array-like, shape (n_samples,)
             Input samples representing the sensitive attributes.
 
         Returns
@@ -50,15 +50,15 @@ class BaseHelper():
         list
             List of unique modalities present in the input sensitive attribute array.
         """
-        return list(set(x_ssa))
+        return set(sensitive_feature)
 
-    def _get_loc(self, x_ssa):
+    def _get_loc(self, sensitive_feature):
         """
         Get the indices of occurrences for each modality in the input sensitive attribute array.
 
         Parameters
         ----------
-        x_ssa : array-like, shape (n_samples,)
+        sensitive_feature : array-like, shape (n_samples,)
             Input sample representing the sensitive attribute.
 
         Returns
@@ -67,17 +67,17 @@ class BaseHelper():
             Dictionary where keys are modalities and values are arrays containing their indices.
         """
         sens_loc = {}
-        for mod in self._get_mod(x_ssa):
-            sens_loc[mod] = np.where(x_ssa == mod)[0]
+        for mod in self._get_mod(sensitive_feature):
+            sens_loc[mod] = np.where(sensitive_feature == mod)[0]
         return sens_loc
 
-    def _get_weights(self, x_ssa):
+    def _get_weights(self, sensitive_feature):
         """
         Calculate weights (probabilities) for each modality based on their occurrences.
 
         Parameters
         ----------
-        x_ssa : array-like, shape (n_samples,)
+        sensitive_feature : array-like, shape (n_samples,)
             Input samples representing the sensitive attribute.
 
         Returns
@@ -85,13 +85,13 @@ class BaseHelper():
         dict
             Dictionary where keys are modalities and values are their corresponding weights.
         """
-        sens_loc = self._get_loc(x_ssa)
+        sens_loc = self._get_loc(sensitive_feature)
         weights = {}
-        for mod in self._get_mod(x_ssa):
-            weights[mod] = len(sens_loc[mod])/len(x_ssa)
+        for mod in self._get_mod(sensitive_feature):
+            weights[mod] = len(sens_loc[mod])/len(sensitive_feature)
         return weights
 
-    def _estimate_ecdf_eqf(self, y, x_ssa, sigma):
+    def _estimate_ecdf_eqf(self, y, sensitive_feature, sigma):
         """
         Estimate ECDF and EQF for each modality, incorporating random noise within [-sigma, sigma].
 
@@ -99,7 +99,7 @@ class BaseHelper():
         ----------
         y : array-like, shape (n_samples,)
             Target values corresponding to the sensitive attribute array.
-        x_ssa : array-like, shape (n_samples,)
+        sensitive_feature : array-like, shape (n_samples,)
             Input samples representing the sensitive attribute.
         sigma : float
             Standard deviation of the random noise added to the data.
@@ -108,9 +108,9 @@ class BaseHelper():
         -------
         None
         """
-        sens_loc = self._get_loc(x_ssa)
+        sens_loc = self._get_loc(sensitive_feature)
         eps = np.random.uniform(-sigma, sigma, len(y))
-        for mod in self._get_mod(x_ssa):
+        for mod in self._get_mod(sensitive_feature):
             self.ecdf[mod] = ECDF(y[sens_loc[mod]] +
                                   eps[sens_loc[mod]])
             self.eqf[mod] = EQF(y[sens_loc[mod]]+eps[sens_loc[mod]])

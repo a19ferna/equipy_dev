@@ -134,7 +134,7 @@ class Wasserstein(BaseHelper):
         return (1-epsilon)*y_fair + epsilon*y_test
 ""
 
-class MultiWasserStein(Wasserstein):
+class MultiWasserStein():
     """
     Class extending Wasserstein for multi-sensitive attribute fairness adjustment.
 
@@ -184,7 +184,6 @@ class MultiWasserStein(Wasserstein):
         -------
         None
         """
-        super().__init__(self, sigma=sigma)
 
         self.y_fair_test = {}
 
