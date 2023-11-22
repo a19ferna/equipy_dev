@@ -1,31 +1,31 @@
 import numpy as np 
 
-def _check_metric(y_true):
+def _check_metric(y):
     """
     Check that it is regression and not classification.
 
     Parameters
     ----------
-    y_true : array-like
-        True values of the data.
+    y : array of shape (n_samples,)
+        Observed, true values.
     
     Raises
     ------
     Warning 
         If it is classification.
     """
-    if np.all(np.isin(y_true, [0,1])):
+    if np.all(np.isin(y, [0,1])):
         raise Warning("You used mean squared error as metric but it looks like you are using classification scores")
     
-def _check_shape(y, x_ssa):
+def _check_shape(y, sensitive_feature):
     """
-    Check the shape and data types of input arrays y and x_ssa.
+    Check the shape and data types of input arrays y and sensitive_feature.
 
     Parameters
     ----------
     y : array-like
         Target values of the data.
-    x_ssa : array-like
+    sensitive_feature : array-like
         Input samples representing the sensitive attribute.
 
     Raises
@@ -33,28 +33,27 @@ def _check_shape(y, x_ssa):
     ValueError
         If the input arrays have incorrect shapes or data types.
     """
-    if not isinstance(x_ssa, np.ndarray):
-        raise ValueError('x_sa must be an array')
+    if not isinstance(sensitive_feature, np.ndarray):
+        raise ValueError('sensitive_features must be an array')
 
     if not isinstance(y, np.ndarray):
         raise ValueError('y must be an array')
 
-    if len(x_ssa) != len(y):
-        raise ValueError('x_sa and y should have the same length')
+    if len(sensitive_feature) != len(y):
+        raise ValueError('sensitive_features and y should have the same length')
 
-    for el in y:
-        if not isinstance(el, float):
-            raise ValueError('y should contain only float numbers')
+    if not (np.issubdtype(y.dtype, np.floating) or np.issubdtype(y.dtype, np.integer)):
+        raise ValueError('y should contain only float or integer numbers')
 
-def _check_mod(sens_val_calib, sens_val_test):
+def _check_mod(modalities_calib, modalities_test):
     """
     Check if modalities in test data are included in calibration data's modalities.
 
     Parameters
     ----------
-    sens_val_calib : list
+    modalities_calib : list
         Modalities from the calibration data.
-    sens_val_test : list
+    modalities_test : list
         Modalities from the test data.
 
     Raises
@@ -62,9 +61,9 @@ def _check_mod(sens_val_calib, sens_val_test):
     ValueError
         If modalities in test data are not present in calibration data.
     """
-    if not all(elem in sens_val_calib for elem in sens_val_test):
+    if not all(modality in modalities_calib for modality in modalities_test):
         raise ValueError(
-            'Modalities in x_ssa_test should be included in modalities of x_sa_calib')
+            'Modalities in sensitive_features of the test sample should be included in modalities of sensitive_features of the calibration sample')
 
 def _check_epsilon(epsilon):
     """
@@ -84,7 +83,7 @@ def _check_epsilon(epsilon):
         raise ValueError(
             'epsilon must be between 0 and 1')
     
-def _check_epsilon_size(self, epsilon, x_sa_test):
+def _check_epsilon_size(self, epsilon, sensitive_features):
     """
     Check if the epsilon list matches the number of sensitive features.
 
@@ -93,7 +92,7 @@ def _check_epsilon_size(self, epsilon, x_sa_test):
     epsilon : list, shape (n_sensitive_features,)
         Fairness parameters controlling the trade-off between fairness and accuracy for each sensitive feature.
 
-    x_sa_test : array-like, shape (n_samples, n_sensitive_features)
+    sensitive_features : array-like, shape (n_samples, n_sensitive_features)
         Test samples representing multiple sensitive attributes.
 
     Raises
@@ -102,11 +101,11 @@ def _check_epsilon_size(self, epsilon, x_sa_test):
         If the length of epsilon does not match the number of sensitive features.
     """
 
-    if x_sa_test.ndim == 1:
+    if sensitive_features.ndim == 1:
         if len(epsilon) != 1:
             raise ValueError(
                 'epsilon must have the same length than the number of sensitive features')
     else:
-        if len(epsilon) != np.shape(x_sa_test)[1]:
+        if len(epsilon) != np.shape(sensitive_features)[1]:
             raise ValueError(
                     'epsilon must have the same length than the number of sensitive features')
