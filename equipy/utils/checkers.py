@@ -61,8 +61,8 @@ def _check_mod(modalities_calib, modalities_test):
     ValueError
         If modalities in test data are not present in calibration data.
     """
-    if not all(modality in modalities_calib for modality in modalities_test):
-        missing_modalities = [modality for modality in modalities_test if modality not in modalities_calib]
+    missing_modalities = set(modalities_test) - set(modalities_calib)
+    if len(missing_modalities) != 0:
         raise ValueError(
             f"The following modalities of the test sensitive features are not in modalities of the calibration sensitive features: {missing_modalities}")
 
