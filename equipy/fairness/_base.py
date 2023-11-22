@@ -24,6 +24,10 @@ class BaseHelper():
         Calculate weights (probabilities) for each modality based on their occurrences.
     _estimate_ecdf_eqf(y, sensitive_feature, sigma)
         Estimate ECDF and EQF for each modality, incorporating random noise within [-sigma, sigma].
+    _get_correction(self, weights, mod, y_with_noise, location_modalities, modalities_test)
+        Calculate correction of y.
+    _fair_y_values(self, y, modalities_test, location_modalities, weights)
+        Apply fairness correction to input values.
 
     Notes
     -----
@@ -35,6 +39,8 @@ class BaseHelper():
     def __init__(self):
         self.ecdf = {}
         self.eqf = {}
+
+        self.weights = {}
 
     def _get_modalities(self, sensitive_feature):
         """
@@ -71,7 +77,7 @@ class BaseHelper():
             location_modalities[modality] = np.where(sensitive_feature == modality)[0]
         return location_modalities
 
-    def _get_weights(self, sensitive_feature):
+    def _compute_weights(self, sensitive_feature):
         """
         Calculate weights (probabilities) for each modality based on their occurrences.
 
@@ -86,10 +92,8 @@ class BaseHelper():
             Dictionary where keys are modalities and values are their corresponding weights.
         """
         location_modalities = self._get_location_modalities(sensitive_feature)
-        weights = {}
         for modality in self._get_modalities(sensitive_feature):
-            weights[modality] = len(location_modalities[modality])/len(sensitive_feature)
-        return weights
+            self.weights[modality] = len(location_modalities[modality])/len(sensitive_feature)
 
     def _estimate_ecdf_eqf(self, y, sensitive_feature, sigma):
         """
@@ -114,3 +118,46 @@ class BaseHelper():
             self.ecdf[modality] = ECDF(y[location_modalities[modality]] +
                                   eps[location_modalities[modality]])
             self.eqf[modality] = EQF(y[location_modalities[modality]]+eps[location_modalities[modality]])
+
+    def _get_correction(self, mod, y_with_noise, location_modalities, modalities_test):
+        """
+        Calculate correction of y.
+
+        Parameters:
+        - weights (dict): A dictionary of weights for each modality.
+        - mod (str): The current modality for which the correction is calculated.
+        - y_with_noise (array): y plus a random noise.
+        - location_modalities (dict): A dictionary mapping modalities to their locations.
+        - modalities_test (set): Set of modalities for which correction is calculated.
+
+        Returns:
+        - float: The correction value.
+        """
+        correction = 0     
+        for _mod in modalities_test:
+            correction += self.weights[_mod] * self.eqf[_mod](self.ecdf[mod](y_with_noise[location_modalities[mod]]))
+        return correction
+
+    def _fair_y_values(self, y, sensitive_feature, modalities_test):
+        """
+        Apply fairness correction to input values.
+
+        Parameters:
+        - y (array): Input values.
+        - sensitive_features : array-like, shape (n_samples, n_sensitive_features)
+            The test samples representing multiple sensitive attributes.
+        - modalities_test (list): List of modalities for correction.
+        - weights (dict): A dictionary of weights for each modality.
+
+        Returns:
+        - array: Fair values after applying correction.
+        """
+        location_modalities = self._get_location_modalities(sensitive_feature)
+        y_fair = np.zeros_like(y)
+        eps = np.random.uniform(-self.sigma, self.sigma, len(y))
+        y_with_noise = y + eps
+        for mod in modalities_test:
+            y_fair[location_modalities[mod]] += self._get_correction( mod, y_with_noise, location_modalities, modalities_test)
+        return y_fair
+
+    

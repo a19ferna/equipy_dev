@@ -93,7 +93,7 @@ def _check_epsilon(epsilon):
         raise ValueError(
             'epsilon must be between 0 and 1')
     
-def _check_epsilon_size(self, epsilon, sensitive_features):
+def _check_epsilon_size(epsilon, sensitive_features):
     """
     Check if the epsilon list matches the number of sensitive features.
 

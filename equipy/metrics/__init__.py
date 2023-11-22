@@ -1,2 +1,2 @@
-from metrics._fairness_metrics import unfairness_multi, unfairness_multi_permutations
+from metrics._fairness_metrics import unfairness
 from metrics._performance_metrics import performance

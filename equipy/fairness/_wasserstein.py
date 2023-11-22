@@ -36,7 +36,6 @@ class Wasserstein(BaseHelper):
         super().__init__()
         self.sigma = sigma
         self.modalities_calib = None
-        self.weights = None
 
     def fit(self, y, sensitive_feature):
         """
@@ -70,9 +69,9 @@ class Wasserstein(BaseHelper):
         """
         _check_shape(y, sensitive_feature)
 
-        self.modalities_calib = self._get_modalities(self, sensitive_feature)
-        self.weights = self._get_weights(self, sensitive_feature)
-        self._estimate_ecdf_eqf(self, y, sensitive_feature, self.sigma)
+        self.modalities_calib = self._get_modalities(sensitive_feature)
+        self._compute_weights(sensitive_feature)
+        self._estimate_ecdf_eqf(y, sensitive_feature, self.sigma)
 
     def transform(self, y, sensitive_feature, epsilon=0):
         """
@@ -119,18 +118,10 @@ class Wasserstein(BaseHelper):
 
         _check_epsilon(epsilon)
         _check_shape(y, sensitive_feature)
-        modalities_test = self._get_modalities(self, sensitive_feature)
+        modalities_test = self._get_modalities(sensitive_feature)
         _check_mod(self.modalities_calib, modalities_test)
 
-        location_modalities = self._get_location_modalities(self, sensitive_feature)
-        y_fair = np.zeros_like(y)
-        eps = np.random.uniform(-self.sigma, self.sigma, len(y))
-        for mod1 in modalities_test:
-            for mod2 in modalities_test:
-                y_fair[location_modalities[mod1]] += self.weights[mod2] * \
-                    self.eqf[mod2](self.ecdf[mod1](
-                        y[location_modalities[mod1]]+eps[location_modalities[mod1]]))
-
+        y_fair = self._fair_y_values(y, sensitive_feature, modalities_test)
         return (1-epsilon)*y_fair + epsilon*y
 ""
 
@@ -192,6 +183,8 @@ class MultiWasserStein():
 
         self.eqf_all = {}
         self.ecdf_all = {}
+
+        self.sigma = sigma
 
 
     def fit(self, y, sensitive_features):
@@ -299,39 +292,3 @@ class MultiWasserStein():
                 y_inter, sens, epsilon[i])
             self.y_fair[f'sensitive_feature_{i+1}'] = y_inter
         return self.y_fair[f'sensitive_feature_{i+1}']
-
-    def get_sequential_fairness(self):
-        """
-        Get the dictionary of fair predictions for each sensitive feature, applied step by step.
-
-        Returns
-        -------
-        dict
-            A dictionary where keys represent sensitive features and values are arrays
-            containing the fair predictions corresponding to each sensitive feature.
-            Each sensitive feature's fairness adjustment is performed sequentially,
-            ensuring that each feature is treated fairly relative to the previous ones.
-
-        Notes
-        -----
-        This method returns fair predictions for each sensitive feature, applying fairness constraints
-        sequentially. The first sensitive feature is adjusted for fairness, and then subsequent features
-        are adjusted in sequence, ensuring that each feature is treated fairly relative to the previous ones.
-
-        Examples
-        --------
-        >>> wasserstein = MultiWasserStein(sigma=0.001)
-        >>> y = np.array([0.6, 0.43, 0.32, 0.8])
-        >>> sensitive_features = np.array([['blue', 5], ['blue', 9], ['green', 5], ['green', 9]])
-        >>> wasserstein.fit(y, sensitive_features)
-        >>> y = np.array([0.8, 0.35, 0.23, 0.2])
-        >>> sensitive_features = np.array([['blue', 9], ['blue', 5], ['blue', 5], ['green', 9]])
-        >>> epsilon = [0.1, 0.2]  
-        >>> fair_predictions = wasserstein.transform(y, sensitive_features, epsilon=epsilon)
-        >>> sequential_fairness = wasserstein.get_sequential_fairness()
-        >>> print(sequential_fairness)
-        {'Base model': array([0.8 , 0.35, 0.23, 0.2 ]), 
-            'sensitive_feature_1': array([0.71026749, 0.37278694, 0.36078694, 0.35778694]), 
-            'sensitive_feature_2': array([0.63767235, 0.44038334, 0.43798334, 0.43738334])}
-        """
-        return self.y_fair

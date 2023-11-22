@@ -84,7 +84,7 @@ def calculate_perm_wst(y_calib, sensitive_features_calib, y_test, sensitive_feat
         else :
             wst.transform(y_test, np.array(
                 all_perm_test[key]), all_perm_epsilon[key])
-        store_dict[key] = wst.get_sequential_fairness()
+        store_dict[key] = wst.y_fair
         old_keys = list(store_dict[key].keys())
         new_keys = ['Base model'] + [f'sens_var_{k}' for k in key]
         key_mapping = dict(zip(old_keys, new_keys))
