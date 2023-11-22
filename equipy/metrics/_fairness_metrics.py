@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.metrics import accuracy_score, mean_squared_error
-
+import warnings
 from scipy.interpolate import interp1d
 import numpy as np
 
@@ -54,6 +54,8 @@ class EQF:
                  ):
         # définition self.interpoler, self.min_val, self.max_val
         self._calculate_eqf(sample_data)
+        if len(sample_data) == 1:
+            warnings.warn('One of your sample data contains a single value')
 
     def _calculate_eqf(self, sample_data):
         """
@@ -65,9 +67,16 @@ class EQF:
         sorted_data = np.sort(sample_data)
         linspace = np.linspace(0, 1, num=len(sample_data))
         # fonction d'interpolation
-        self.interpolater = interp1d(linspace, sorted_data)
+        if len(sample_data) == 1:
+            linspace = np.linspace(0, 1, num=2)
+            self.interpolater = interp1d(linspace, [sorted_data[0]]*len(linspace))
+
+        else:
+            self.interpolater = interp1d(linspace, sorted_data)
+
         self.min_val = sorted_data[0]
         self.max_val = sorted_data[-1]
+
 
     def __call__(self, value_):
         """
