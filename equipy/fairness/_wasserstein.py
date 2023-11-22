@@ -219,6 +219,9 @@ class MultiWasserStein():
         """
         _check_nb_observations(x_sa_calib)
 
+        if x_sa_calib.ndim == 1:
+            x_sa_calib = np.reshape(x_sa_calib, (len(x_sa_calib),1))
+
         for i, sens in enumerate(x_sa_calib.T):
             wasserstein_instance = Wasserstein(sigma=self.sigma)
             if i == 0:
