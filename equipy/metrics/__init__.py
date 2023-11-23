@@ -1,2 +1,2 @@
-from _fairness_metrics import unfairness
-from _performance_metrics import performance
+from metrics._fairness_metrics import unfairness
+from metrics._performance_metrics import performance
