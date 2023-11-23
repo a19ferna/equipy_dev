@@ -1,8 +1,8 @@
 import numpy as np
 import itertools
-from fairness._wasserstein import MultiWasserStein
-from metrics._performance_metrics import performance_dict
-from metrics._fairness_metrics import unfairness_dict
+from ._wasserstein import MultiWasserStein
+from ..metrics._performance_metrics import performance_dict
+from ..metrics._fairness_metrics import unfairness_dict
 from sklearn.metrics import mean_squared_error
 
 def permutations_cols(sensitive_features):
