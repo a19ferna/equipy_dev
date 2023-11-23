@@ -12,7 +12,8 @@ def fairness_density_plot(y, sensitive_features):
                 : The samples representing multiple sensitive attributes.
     
     Returns:
-    None
+    Plot the density function for predictions based on different sensitive features and fairness based on .
+    
 
     Raises:
     ValueError: If the input data is not in the expected format.
@@ -23,8 +24,8 @@ def fairness_density_plot(y, sensitive_features):
     Example:
     >>> y = {
             'Base model': [prediction_values],
-            'sens_var_1': [prediction_values],
-            'sens_var_2': [prediction_values],
+            'sensitive_feature_1': [prediction_values],
+            'sensitive_feature_2': [prediction_values],
             ...
         }
     >>> sensitive_features = [[sensitive_features_of_ind_1_values], [sensitive_feature_of_ind_2_values], ...]
@@ -32,42 +33,30 @@ def fairness_density_plot(y, sensitive_features):
     Usage:
     fairness_density_plot(y, sensitive_features)
     """
+    
+    fig, axes = plt.subplots(nrows=len(sensitive_features.T), ncols=len(sensitive_features.T)+1,figsize=(26, 18))
+    fig.suptitle('Density function sequentally fair', fontsize=40)
 
-    plt.figure(figsize=(12, 9))
-    n_a = len(sensitive_features.T)
-    n_m = 1
+    axes = axes.flatten(order='F')
+
+    graph = 0
+    modalities = {}
 
     for key in y.keys():
-        title = None
         df = pd.DataFrame()
-        for i, sens in enumerate(sensitive_features.T):
-            df[f"sensitive_feature_{i+1}"] = sens
-
         df['Prediction'] = y[key]
-        if key == 'Base model':
-            for i in range(len(sensitive_features.T)):
-                title = key
-                plt.subplot(n_a, n_m + 1, i * (n_m+1) + 1)
-                modalities = df[f'sensitive_feature_{i+1}'].unique()
-                for mod in modalities:
-                    subset_data = df[df[f'sensitive_feature_{i+1}'] == mod]
-                    sns.kdeplot(
-                        subset_data['Prediction'], label=f'sensitive_feature_{i+1}: {mod}', fill=True, alpha=0.2)
-                plt.legend()
-                plt.title(title, fontsize=11)
-
-        else:
-            for i in range(len(sensitive_features.T)):
-                if key == f'sensitive_feature_{i+1}':
-                    title = key
-                    plt.subplot(n_a, n_m + 1, i * (n_m+1) + 2)
-                    modalities = df[f'sensitive_feature_{i+1}'].unique()
-                    for mod in modalities:
-                        subset_data = df[df[f'sensitive_feature_{i+1}'] == mod]
-                        sns.kdeplot(
-                            subset_data['Prediction'], label=f'sensitive_feature_{i+1}: {mod}', fill=True, alpha=0.2)
-                        plt.legend()
-                    plt.title(title, fontsize=11)
-
-    plt.xlabel('Prediction')
-    plt.ylabel('Density')
+        title = key
+        for i, sensitive_feature in enumerate(sensitive_features.T):
+            df[f"sensitive_feature_{i+1}"] = sensitive_feature
+            modalities[i] = df[f"sensitive_feature_{i+1}"].unique()
+            for mod in modalities[i]:
+                subset_data = df[df[f'sensitive_feature_{i+1}'] == mod]
+                sns.kdeplot(
+                    subset_data['Prediction'], label=f'sensitive_feature_{i+1}: {mod}', fill=True, alpha=0.2, ax=axes[graph])
+            axes[graph].legend(fontsize=15)
+            axes[graph].set_title(title, fontsize=30)
+            axes[graph].set_xlabel('Prediction', fontsize=20)
+            axes[graph].set_ylabel('Density', fontsize=20)
+            axes[graph].xaxis.set_tick_params(labelsize=20)
+            axes[graph].yaxis.set_tick_params(labelsize=20)
+            graph += 1
