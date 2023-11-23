@@ -1,1 +1,1 @@
-from equipy.fairness._wasserstein import MultiWasserStein
+from _wasserstein import MultiWasserStein
