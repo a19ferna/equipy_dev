@@ -1,1 +1,1 @@
-from fairness._more_wasserstein import permutations_cols, calculate_perm_wst, performance_permutations
+from _wasserstein import MultiWasserStein
