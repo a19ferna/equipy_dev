@@ -1,0 +1,1 @@
+from fairness._wasserstein import MultiWasserStein
