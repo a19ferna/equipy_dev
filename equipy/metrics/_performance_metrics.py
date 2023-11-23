@@ -1,5 +1,5 @@
 from sklearn.metrics import mean_squared_error
-from utils.checkers import _check_metric
+from ..utils.checkers import _check_metric
 
 def performance(y_true, y_pred, metric=mean_squared_error):
     """
