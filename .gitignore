@@ -36,6 +36,8 @@ main/**/*try*
 
 main/**/*checkpoint*
 
+.venv*
+venv*
 
 # if tVhe files to be tracked are in subdirectories
 
