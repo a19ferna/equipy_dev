@@ -1,3 +1,4 @@
+from matplotlib.collections import EventCollection
 import numpy as np
 from sklearn.metrics import accuracy_score, mean_squared_error
 import warnings
@@ -119,9 +120,11 @@ def diff_quantile(data1, data2):
     >>> print(diff)
     3.9797979797979797
     """
+    #use pyoty
     probs = np.linspace(0, 1, num=100)
-    eqf1 = np.quantile(data1, probs)
-    eqf2 = np.quantile(data2, probs)
+    data1_cleaned, data2_cleaned = data1, data2
+    eqf1 = np.quantile(data1_cleaned, probs)
+    eqf2 = np.quantile(data2_cleaned, probs)
     unfair_value = np.max(np.abs(eqf1-eqf2))
     return unfair_value
 

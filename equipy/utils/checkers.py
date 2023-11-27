@@ -1,5 +1,9 @@
+from jsonschema import draft201909_format_checker
 import numpy as np
 import warnings
+import pandas as pd
+
+from sklearn.preprocessing import StandardScaler
 
 def _check_metric(y):
     """
@@ -120,3 +124,17 @@ def _check_epsilon_size(epsilon, sensitive_features):
         if len(epsilon) != np.shape(sensitive_features)[1]:
             raise ValueError(
                     'epsilon must have the same length than the number of sensitive features')
+        
+# def _check_data(data1, data2):
+#     standardizer = StandardScaler()
+#     standardizer.fit_transform(data1)
+#     standardizer.fit_transform(data2)
+
+#     df1 = pd.DataFrame({'values' : data1})
+#     df2 = pd.DataFrame({'values' : data2})
+
+#     df1['bins'] = pd.qcut(data1, q = 100)
+#     df2['bins'] = pd.qcut(data2, q = 100)
+
+#     sd1 = df1.groupby('bins')['values'].std()
+#     sd2 = df1.groupby('bins')['values'].std()
