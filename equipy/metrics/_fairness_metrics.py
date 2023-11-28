@@ -4,6 +4,7 @@ from sklearn.metrics import accuracy_score, mean_squared_error
 import warnings
 from scipy.interpolate import interp1d
 import numpy as np
+import ot
 
 #WARNING:You cannot calculate the EQF function of a single value : this means that if only one individual 
 # has a specific sensitive value, you cannot use the transform function. 
@@ -102,13 +103,16 @@ class EQF:
             else :
                 raise ValueError('Error with input value')
 
-def diff_quantile(data1, data2):
+def diff_quantile(data1, data2, n_min=1000):
     """
-    Compute the unfairness between two populations based on their quantile functions.
-
+    Compute the unfairness between two populations based on their quantile functions. 
+    If the number of points in data1 is less than n_min, compute the Wasserstein distance using the POT package. 
+    Otherwise, determine unfairness as the maximum difference in quantiles between the two populations.
+    
     Parameters:
     data1 (array-like): The first set of data points.
     data2 (array-like): The second set of data points.
+    n_min (float) : Below, we compute the Wasserstein distance.
 
     Returns:
     float: The unfairness value between the two populations.
@@ -120,16 +124,26 @@ def diff_quantile(data1, data2):
     >>> print(diff)
     3.9797979797979797
     """
-    #use pyoty
-    probs = np.linspace(0, 1, num=100)
-    data1_cleaned, data2_cleaned = data1, data2
-    eqf1 = np.quantile(data1_cleaned, probs)
-    eqf2 = np.quantile(data2_cleaned, probs)
-    unfair_value = np.max(np.abs(eqf1-eqf2))
+
+    n1 = len(data1) # data1 corresponds to y
+    n2 = len(data2)
+
+    if n1 < n_min:
+        a, b = np.ones((n1,)) / n1, np.ones((n2,)) / n2  # weights of each point of the two distributions
+        M = ot.dist(data1.reshape((n1, 1)), data2.reshape((n2, 1))) # euclidian distance matrix
+        M = M/M.max()
+        unfair_value = np.sqrt(ot.emd2(a,b,M))
+
+    else:
+        probs = np.linspace(0, 1, num=100)
+        eqf1 = np.quantile(data1, probs)
+        eqf2 = np.quantile(data2, probs)
+        unfair_value = np.max(np.abs(eqf1-eqf2))
+
     return unfair_value
 
 
-def unfairness(y, sensitive_features):
+def unfairness(y, sensitive_features, n_min=1000):
     """
     Compute the unfairness value for a given fair output (y) and multiple sensitive attributes data (sensitive_features) contening several modalities.
     If there is a single sensitive feature, it calculates the maximum quantile difference between different modalities of that single sensitive feature.
@@ -138,6 +152,7 @@ def unfairness(y, sensitive_features):
     Parameters:
     y (array-like): Predicted (fair or not) output data.
     sensitive_features (array-like): Sensitive attribute data.
+    n_min (float) : Below, we compute the unfairness based on the Wasserstein distance.
 
     Returns:
     float: Unfairness value in the dataset.
@@ -155,7 +170,7 @@ def unfairness(y, sensitive_features):
         lst_unfairness = []
         for modality in modalities:
             y_modality = y[sensitive_features == modality]
-            lst_unfairness.append(diff_quantile(y, y_modality))
+            lst_unfairness.append(diff_quantile(y, y_modality, n_min))
         new_list.append(max(lst_unfairness))
     else :
         for sensitive_feature in sensitive_features.T:
@@ -163,11 +178,11 @@ def unfairness(y, sensitive_features):
             lst_unfairness = []
             for modality in modalities:
                 y_modality = y[sensitive_feature == modality]
-                lst_unfairness.append(diff_quantile(y, y_modality))
+                lst_unfairness.append(diff_quantile(y, y_modality, n_min))
             new_list.append(max(lst_unfairness))
     return max(new_list)
 
-def unfairness_dict(y_fair_dict, sensitive_features):
+def unfairness_dict(y_fair_dict, sensitive_features, n_min=1000):
     """
     Compute unfairness values for sequentially fair output datasets and multiple sensitive attributes datasets.
 
@@ -177,6 +192,7 @@ def unfairness_dict(y_fair_dict, sensitive_features):
             Each sensitive feature's fairness adjustment is performed sequentially,
             ensuring that each feature is treated fairly relative to the previous ones.
     sensitive_features (array-like): Sensitive attribute data.
+    n_min (float) : Below, we compute the unfairness based on the Wasserstein distance.
 
     Returns:
     dict: A dictionary containing unfairness values for each level of fairness.
@@ -191,6 +207,6 @@ def unfairness_dict(y_fair_dict, sensitive_features):
     """
     unfairness_dict = {}
     for i, y_fair in enumerate(y_fair_dict.values()):
-        result = unfairness(y_fair, sensitive_features)
+        result = unfairness(y_fair, sensitive_features, n_min)
         unfairness_dict[f'sensitive_feature_{i}'] = result
     return unfairness_dict
