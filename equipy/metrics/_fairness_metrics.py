@@ -130,9 +130,10 @@ def diff_quantile(data1, data2, n_min=1000):
 
     if n1 < n_min:
         a, b = np.ones((n1,)) / n1, np.ones((n2,)) / n2  # weights of each point of the two distributions
-        M = ot.dist(data1.reshape((n1, 1)), data2.reshape((n2, 1))) # euclidian distance matrix
+        M = ot.dist(data1.reshape((n1, 1)), data2.reshape((n2, 1)),
+                    metric='euclidean') # euclidian distance matrix
         M = M/M.max()
-        unfair_value = np.sqrt(ot.emd2(a,b,M))
+        unfair_value = ot.emd2(a,b,M)
 
     else:
         probs = np.linspace(0, 1, num=100)
