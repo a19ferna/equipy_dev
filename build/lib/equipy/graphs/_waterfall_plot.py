@@ -40,6 +40,7 @@ def _add_doted_points(ax, values):
     for i, v in enumerate(values):
         ax.plot([i+0.25, i+1.25], [v, v],
                 linestyle='--', linewidth=1.5, c='grey')
+
         
 def waterfall_plot(unfs_levels, ax=None, hatch=False, approximate=False):
 
@@ -88,6 +89,5 @@ def waterfall_plot_approximate(unfs_levels):
 
             else:
                 waterfall_plot(dict, ax=ax, approximate=True)
-
 
         plt.show()
