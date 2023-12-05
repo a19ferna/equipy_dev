@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
-import re 
 
 from equipy import fairness
 
@@ -38,7 +37,7 @@ def arrow_plot(unfs_dict, performance_dict, permutations=False, base_model=True,
     for i, key in enumerate(unfs_dict.keys()):
         x.append(unfs_dict[key])
         if i != 0:
-            sens.append(int(''.join(str(digit) for digit in re.findall('\d+', key))))
+            sens.append(int(key[9:]))
 
     for key in performance_dict.keys():
         y.append(performance_dict[key])
