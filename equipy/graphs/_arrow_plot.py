@@ -8,28 +8,39 @@ from ..utils.permutations._compute_permutations import permutations_cols, calcul
 from ..utils.permutations.metrics._fairness_permutations import unfairness_permutations
 from ..utils.permutations.metrics._performance_permutations import performance_permutations
 
+
 def arrow_plot(unfs_dict, performance_dict, permutations=False, base_model=True, final_model=True):
     """
-    Generates an arrow plot representing the fairness-performance combinations for each level of fairness.
+    Generates an arrow plot representing the fairness-performance combinations step by step (by sensitive attribute) to reach fairness.
 
-    Parameters:
-    - unfs_dict (dict): A dictionary containing unfairness values associated to the sequentally fair output datasets.
-    - performance_dict (dict): A dictionary containing performance values associated to the sequentally fair output datasets.
-    - permutations (bool, optional): If True, displays permutations of arrows based on input dictionaries.
-                                     Defaults to False.
-    - base_model (bool, optional): If True, includes the base model arrow. Defaults to True.
-    - final_model (bool, optional): If True, includes the final model arrow. Defaults to True.
+    Parameters
+    ----------
+    unfs_dict : dict
+        A dictionary containing unfairness values associated with the sequentially fair output datasets.
+    performance_dict : dict
+        A dictionary containing performance values associated with the sequentially fair output datasets.
+    permutations : bool, optional
+        If True, displays permutations of arrows based on input dictionaries. Defaults to False.
+    base_model : bool, optional
+        If True, includes the base model arrow. Defaults to True.
+    final_model : bool, optional
+        If True, includes the final model arrow. Defaults to True.
 
-    Returns:
-    None
+    Returns
+    -------
+    matplotlib.figure.Figure 
+        arrows representing the fairness-performance combinations step by step (by sensitive attribute) to reach fairness.
 
-    Plotting Conventions:
+    Plotting Conventions
+    --------------------
     - Arrows represent different fairness-performance combinations.
     - Axes are labeled for unfairness (x-axis) and performance (y-axis).
 
-    Note:
-    - This function uses global variable `ax` for plotting, ensuring compatibility with external code.
+    Note
+    ----
+    - This function uses a global variable `ax` for plotting, ensuring compatibility with external code.
     """
+
     x = []
     y = []
     sens = [0]
@@ -60,13 +71,13 @@ def arrow_plot(unfs_dict, performance_dict, permutations=False, base_model=True,
                 x[i]+np.min(x)/20, y[i]), xy=(x[i], y[i]), size=10)
             ax.scatter(x[i], y[i], label=label, marker="+", s=150)
         elif (i == len(x)-1) & (final_model):
-            
+
             label = f"$A_{1}$" + r"$_:$" + f"$_{i}$-fair"
             line.axes.annotate(label, xytext=(
                 x[i]+np.min(x)/20, y[i]), xy=(x[i], y[i]), size=10)
             ax.scatter(x[i], y[i], label=label, marker="*", s=150)
         elif (i == 2) & (i < len(x)-1):
-            
+
             label = f"$A_{sens[1]}$" + r"$_,$" + f"$_{sens[i]}$-fair"
             line.axes.annotate(label, xytext=(
                 x[i]+np.min(x)/20, y[i]), xy=(x[i], y[i]), size=10)
@@ -85,24 +96,33 @@ def arrow_plot(unfs_dict, performance_dict, permutations=False, base_model=True,
 
 def arrow_plot_permutations(unfs_list, performance_list):
     """
-    Plot arrows representing the fairness-performance combinations for each level of fairness for all permutations (order of sensitive variables which with fairness is calculate).
+    Plot arrows representing the fairness-performance ccombinations step by step (by sensitive attribute) to reach fairness for all permutations
+    (order of sensitive variables for which fairness is calculated).
 
-    Parameters:
-    - unfs_list (list): A list of dictionaries containing unfairness values for each permutation of fair output datasets.
-    - performance_list (list): A list of dictionaries containing performance values for each permutation of fair output datasets.
+    Parameters
+    ----------
+    unfs_list : list
+        A list of dictionaries containing unfairness values for each permutation of fair output datasets.
+    performance_list : list
+        A list of dictionaries containing performance values for each permutation of fair output datasets.
 
-    Returns:
-    None
+    Returns
+    -------
+    matplotlib.figure.Figure
+        arrows representing the fairness-performance combinations step by step (by sensitive attribute) to reach fairness for each combination.
 
-    Plotting Conventions:
+    Plotting Conventions
+    --------------------
     - Arrows represent different fairness-performance combinations for each scenario in the input lists.
     - Axes are labeled for unfairness (x-axis) and performance (y-axis).
 
-    Example Usage:
+    Example Usage
+    -------------
     >>> arrow_plot_permutations(unfs_list, performance_list)
 
-    Note:
-    - This function uses global variable `ax` for plotting, ensuring compatibility with external code.
+    Note
+    ----
+    This function uses a global variable `ax` for plotting, ensuring compatibility with external code.
     """
     global ax
     fig, ax = plt.subplots()
@@ -116,13 +136,15 @@ def arrow_plot_permutations(unfs_list, performance_list):
         else:
             arrow_plot(unfs_list[i], performance_list[i], permutations=True,
                        base_model=False, final_model=False)
-            
+
 
 def arrow_plot_from_scratch(sensitive_features_calib, sensitive_features_test, y_calib, y_test, y_true_test, epsilon=None, test_size=0.3, permutation=True, metric=mean_squared_error):
-    permut_y_fair_dict = calculate_perm_wst(y_calib, sensitive_features_calib, y_test, sensitive_features_test, epsilon=epsilon)
-    all_combs_sensitive_features_test = permutations_cols(sensitive_features_test)
-    unfs_list = unfairness_permutations(permut_y_fair_dict, all_combs_sensitive_features_test)
-    performance_list = performance_permutations(y_true_test, permut_y_fair_dict, metric=metric)
+    permut_y_fair_dict = calculate_perm_wst(
+        y_calib, sensitive_features_calib, y_test, sensitive_features_test, epsilon=epsilon)
+    all_combs_sensitive_features_test = permutations_cols(
+        sensitive_features_test)
+    unfs_list = unfairness_permutations(
+        permut_y_fair_dict, all_combs_sensitive_features_test)
+    performance_list = performance_permutations(
+        y_true_test, permut_y_fair_dict, metric=metric)
     arrow_plot_permutations(unfs_list, performance_list)
-
-

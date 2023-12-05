@@ -2,26 +2,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 def fairness_density_plot(y, sensitive_features):
     """
     Visualizes the distribution of predictions based on different sensitive features using kernel density estimates (KDE).
 
-    Parameters:
-    - y (dict): A dictionary containing sequentally fair output datasets.
-    - sensitive_features (array-like (shape (n_samples, n_sensitive_features)) 
-                : The samples representing multiple sensitive attributes.
-    
-    Returns:
-    Plot the density function for predictions based on different sensitive features and fairness based on .
-    
+    Parameters
+    ----------
+    y : dict
+        A dictionary containing sequentially fair output datasets.
+    sensitive_features : np.ndarray, shape (n_samples, n_sensitive_features)
+        The samples representing multiple sensitive attributes.
 
-    Raises:
-    ValueError: If the input data is not in the expected format.
+    Returns
+    -------
+    matplotlib.figure.Figure
+        the density function for predictions based on different sensitive features and fairness.
 
-    Plotting Conventions:
+    Raises
+    ------
+    ValueError
+        If the input data is not in the expected format.
+
+    Plotting Conventions
+    --------------------
     - The x-axis represents prediction values, and the y-axis represents density.
 
-    Example:
+    Example
+    -------
     >>> y = {
             'Base model': [prediction_values],
             'sensitive_feature_1': [prediction_values],
@@ -30,11 +38,13 @@ def fairness_density_plot(y, sensitive_features):
         }
     >>> sensitive_features = [[sensitive_features_of_ind_1_values], [sensitive_feature_of_ind_2_values], ...]
 
-    Usage:
+    Usage
+    -----
     fairness_density_plot(y, sensitive_features)
     """
-    
-    fig, axes = plt.subplots(nrows=len(sensitive_features.T), ncols=len(sensitive_features.T)+1,figsize=(26, 18))
+
+    fig, axes = plt.subplots(nrows=len(sensitive_features.T), ncols=len(
+        sensitive_features.T)+1, figsize=(26, 18))
     fig.suptitle('Density function sequentally fair', fontsize=40)
 
     axes = axes.flatten(order='F')

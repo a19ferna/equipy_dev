@@ -5,6 +5,7 @@ import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
 
+
 def _check_metric(y):
     """
     Check that it is regression and not classification.
@@ -13,21 +14,24 @@ def _check_metric(y):
     ----------
     y : array of shape (n_samples,)
         Observed, true values.
-    
+
     Raises
     ------
     Warning 
         If it is classification.
     """
-    if np.all(np.isin(y, [0,1])):
-        warnings.warn("You used mean squared error as metric but it looks like you are using classification scores")
-    
+    if np.all(np.isin(y, [0, 1])):
+        warnings.warn(
+            "You used mean squared error as metric but it looks like you are using classification scores")
+
+
 def _check_nb_observations(sensitive_features):
     if sensitive_features.ndim == 1 & len(sensitive_features) == 1:
         raise ValueError("Fairness can't be applied on a single observation")
     if sensitive_features.ndim == 2 & np.shape(sensitive_features)[1] == 1:
         raise ValueError("Fairness can't be applied on a single observation")
-    
+
+
 def _check_shape(y, sensitive_feature):
     """
     Check the shape and data types of input arrays y and sensitive_feature.
@@ -51,13 +55,16 @@ def _check_shape(y, sensitive_feature):
         raise ValueError('y must be an array')
 
     if len(sensitive_feature) != len(y):
-        raise ValueError('sensitive_features and y should have the same length')
-    
+        raise ValueError(
+            'sensitive_features and y should have the same length')
+
     if len(np.unique(sensitive_feature)) == 1:
-        raise ValueError("At least one of your sensitive attributes contains only one modality and so it is already fair. Remove it from your sensitive features.")
+        raise ValueError(
+            "At least one of your sensitive attributes contains only one modality and so it is already fair. Remove it from your sensitive features.")
 
     if not (np.issubdtype(y.dtype, np.floating) or np.issubdtype(y.dtype, np.integer)):
         raise ValueError('y should contain only float or integer numbers')
+
 
 def _check_mod(modalities_calib, modalities_test):
     """
@@ -80,6 +87,7 @@ def _check_mod(modalities_calib, modalities_test):
         raise ValueError(
             f"The following modalities of the test sensitive features are not in modalities of the calibration sensitive features: {missing_modalities}")
 
+
 def _check_epsilon(epsilon):
     """
     Check if epsilon (fairness parameter) is within the valid range [0, 1].
@@ -97,7 +105,8 @@ def _check_epsilon(epsilon):
     if epsilon < 0 or epsilon > 1:
         raise ValueError(
             'epsilon must be between 0 and 1')
-    
+
+
 def _check_epsilon_size(epsilon, sensitive_features):
     """
     Check if the epsilon list matches the number of sensitive features.
@@ -123,18 +132,4 @@ def _check_epsilon_size(epsilon, sensitive_features):
     else:
         if len(epsilon) != np.shape(sensitive_features)[1]:
             raise ValueError(
-                    'epsilon must have the same length than the number of sensitive features')
-        
-# def _check_data(data1, data2):
-#     standardizer = StandardScaler()
-#     standardizer.fit_transform(data1)
-#     standardizer.fit_transform(data2)
-
-#     df1 = pd.DataFrame({'values' : data1})
-#     df2 = pd.DataFrame({'values' : data2})
-
-#     df1['bins'] = pd.qcut(data1, q = 100)
-#     df2['bins'] = pd.qcut(data2, q = 100)
-
-#     sd1 = df1.groupby('bins')['values'].std()
-#     sd2 = df1.groupby('bins')['values'].std()
+                'epsilon must have the same length than the number of sensitive features')
