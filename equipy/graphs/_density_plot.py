@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def fairness_density_plot(y, sensitive_features):
+def fair_density_plot(y, sensitive_features):
     """
     Visualizes the distribution of predictions based on different sensitive features using kernel density estimates (KDE).
 

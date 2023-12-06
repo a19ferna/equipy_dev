@@ -272,7 +272,7 @@ class MultiWasserstein():
         >>> print(fair_predictions)
         [0.7015008  0.37444565 0.37204565 0.37144565]
         """
-        if epsilon == None:
+        if epsilon is None:
             if sensitive_features.ndim == 1:
                 epsilon = [0]
             else:
