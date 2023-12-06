@@ -2,8 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 
-from equipy import fairness
-
 from ..utils.permutations._compute_permutations import permutations_columns, calculate_perm_wasserstein
 from ..utils.permutations.metrics._fairness_permutations import unfairness_permutations
 from ..utils.permutations.metrics._performance_permutations import performance_permutations
@@ -94,7 +92,7 @@ def fair_arrow_plot(unfs_dict, performance_dict, permutations=False, base_model=
     ax.legend(loc="best")
 
 
-def fair_multiple_arrow_plot(unfs_list, performance_list):
+def _fair_custimized_arrow_plot(unfs_list, performance_list):
     """
     Plot arrows representing the fairness-performance ccombinations step by step (by sensitive attribute) to reach fairness for all permutations
     (order of sensitive variables for which fairness is calculated).
@@ -138,7 +136,7 @@ def fair_multiple_arrow_plot(unfs_list, performance_list):
                        base_model=False, final_model=False)
 
 
-def custom_fair_arrow_plot(sensitive_features_calib, sensitive_features_test, y_calib, y_test, y_true_test, epsilon=None, test_size=0.3, permutation=True, metric=mean_squared_error):
+def fair_multiple_arrow_plot(sensitive_features_calib, sensitive_features_test, y_calib, y_test, y_true_test, epsilon=None, test_size=0.3, permutation=True, metric=mean_squared_error):
     """
     Plot arrows representing the fairness-performance combinations step by step (by sensitive attribute) to reach fairness for different permutations.
 
@@ -189,4 +187,4 @@ def custom_fair_arrow_plot(sensitive_features_calib, sensitive_features_test, y_
         permut_y_fair_dict, all_combs_sensitive_features_test)
     performance_list = performance_permutations(
         y_true_test, permut_y_fair_dict, metric=metric)
-    fair_multiple_arrow_plot(unfs_list, performance_list)
+    _fair_custimized_arrow_plot(unfs_list, performance_list)
