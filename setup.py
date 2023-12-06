@@ -6,7 +6,7 @@ with open("README.md", "r") as f:
 setup(
     name="EquiPy",
     version="0.0.1",
-    author="Agathe F, Suzie G, Francois H, Philipp R",
+    author="Agathe F, Suzie G, Francois H, Philipp R, Arthur C",
     author_email="nemecontactepas@gmail.com",
     description="A package to get fairness on your predictions",
     long_description=long_description,
