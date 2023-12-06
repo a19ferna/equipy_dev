@@ -139,6 +139,48 @@ def fair_arrow_plot_permutations(unfs_list, performance_list):
 
 
 def custom_fair_arrow_plot(sensitive_features_calib, sensitive_features_test, y_calib, y_test, y_true_test, epsilon=None, test_size=0.3, permutation=True, metric=mean_squared_error):
+    """
+    Plot arrows representing the fairness-performance combinations step by step (by sensitive attribute) to reach fairness for different permutations.
+
+    Parameters
+    ----------
+    sensitive_features_calib : numpy.ndarray
+        Sensitive features for calibration.
+    sensitive_features_test : numpy.ndarray
+        Sensitive features for testing.
+    y_calib : numpy.ndarray
+        Predictions for calibration.
+    y_test : numpy.ndarray
+        Predictions for testing.
+    y_true_test : numpy.ndarray
+        True labels for testing.
+    epsilon : float, optional
+        Epsilon value for calculating Wasserstein distance. Defaults to None.
+    test_size : float, optional
+        Size of the testing set. Defaults to 0.3.
+    permutation : bool, optional
+        If True, displays permutations of arrows based on input dictionaries. Defaults to True.
+    metric : function, optional
+        The metric used to evaluate performance. Defaults to mean_squared_error.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        Arrows representing the fairness-performance combinations step by step (by sensitive attribute) to reach fairness for different permutations.
+
+    Plotting Conventions
+    --------------------
+    - Arrows represent different fairness-performance combinations for each permutation.
+    - Axes are labeled for unfairness (x-axis) and performance (y-axis).
+
+    Example Usage
+    -------------
+    >>> custom_fair_arrow_plot(sensitive_features_calib, sensitive_features_test, y_calib, y_test, y_true_test)
+
+    Note
+    ----
+    This function uses a global variable `ax` for plotting, ensuring compatibility with external code.
+    """
     permut_y_fair_dict = calculate_perm_wasserstein(
         y_calib, sensitive_features_calib, y_test, sensitive_features_test, epsilon=epsilon)
     all_combs_sensitive_features_test = permutations_columns(
