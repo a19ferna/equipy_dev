@@ -49,7 +49,7 @@ def _add_bar_labels(values, pps, ax):
 
     Returns
     -------
-    matplotlib.text.Text
+    matplotlib.axes.Axes
         Text object representing the labels added to the top of each bar in the plot.
     """
 
@@ -68,14 +68,28 @@ def _add_doted_points(ax, values):
     """
     Add dotted lines at the top of each bar in a bar plot.
 
-    Parameters:
-    - ax (matplotlib.axes.Axes): The Axes on which the bars are plotted.
-    - values (list): A list of numerical values representing the heights of the bars.
+    Parameters
+    ----------
+    ax : numpy.ndarray
+        The Axes on which the bars are plotted.
 
-    Returns:
-    - Plot dotted points between the top of the bar and the bottom of the next bar
+    values : numpy.ndarray
+        An array of numerical values representing the heights of the bars.
+
+    Returns
+    -------
+    matplotlib.axes.Axes
+        The dotted lines at the top of each bar in a bar plot
 
     This function adds dotted lines at the top of each bar in a bar plot, corresponding to the height values.
+    
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> fig, ax = plt.subplots()
+    >>> values = np.array([10, 15, 7, 12, 8])
+    >>> add_dotted_lines(ax, values)
+    >>> plt.show()
     """
     for i, v in enumerate(values):
         ax.plot([i+0.25, i+1.25], [v, v],
@@ -95,7 +109,7 @@ def _add_legend(pps, distance, hatch=False):
 
     Returns
     -------
-    matplotlib.collections.LineCollection
+    matplotlib.axes.Axes
         LineCollection object representing the dotted lines added at the top of each bar in the plot.
     """
 
@@ -152,7 +166,7 @@ def waterfall_plot(unfs_exact, unfs_approx=None):
 
     Returns
     -------
-    matplotlib.figure.Figure
+    matplotlib.axes.Axes
         The Figure object representing the waterfall plot.
 
     Notes
