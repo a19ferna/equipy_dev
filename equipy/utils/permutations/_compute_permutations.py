@@ -85,7 +85,7 @@ def calculate_perm_wasserstein(y_calib, sensitive_features_calib, y_test, sensit
     """
     all_perm_calib = permutations_columns(sensitive_features_calib)
     all_perm_test = permutations_columns(sensitive_features_test)
-    if epsilon != None:
+    if epsilon is not None:
         all_perm_epsilon = permutations_columns(np.array([np.array(epsilon).T]))
         for key in all_perm_epsilon.keys():
             all_perm_epsilon[key] = all_perm_epsilon[key][0]
