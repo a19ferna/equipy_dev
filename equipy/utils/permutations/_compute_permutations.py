@@ -4,7 +4,7 @@ import numpy as np
 from ...fairness._wasserstein import MultiWasserstein
 
 
-def permutations_cols(sensitive_features):
+def permutations_columns(sensitive_features):
     """
     Generate permutations of columns in the input array sensitive_features.
 
@@ -46,7 +46,7 @@ def permutations_cols(sensitive_features):
     return dict_all_combs
 
 
-def calculate_perm_wst(y_calib, sensitive_features_calib, y_test, sensitive_features_test, epsilon=None):
+def calculate_perm_wasserstein(y_calib, sensitive_features_calib, y_test, sensitive_features_test, epsilon=None):
     """
     Calculate Wasserstein distance for different permutations of sensitive features between calibration and test sets.
 
@@ -83,10 +83,10 @@ def calculate_perm_wst(y_calib, sensitive_features_calib, y_test, sensitive_feat
     This function calculates Wasserstein distance for different permutations of sensitive features
     between calibration and test sets and stores the sequential fairness values in a dictionary.
     """
-    all_perm_calib = permutations_cols(sensitive_features_calib)
-    all_perm_test = permutations_cols(sensitive_features_test)
+    all_perm_calib = permutations_columns(sensitive_features_calib)
+    all_perm_test = permutations_columns(sensitive_features_test)
     if epsilon != None:
-        all_perm_epsilon = permutations_cols(np.array([np.array(epsilon).T]))
+        all_perm_epsilon = permutations_columns(np.array([np.array(epsilon).T]))
         for key in all_perm_epsilon.keys():
             all_perm_epsilon[key] = all_perm_epsilon[key][0]
 

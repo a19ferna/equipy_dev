@@ -4,7 +4,7 @@ from sklearn.metrics import mean_squared_error
 
 from equipy import fairness
 
-from ..utils.permutations._compute_permutations import permutations_cols, calculate_perm_wst
+from ..utils.permutations._compute_permutations import permutations_columns, calculate_perm_wasserstein
 from ..utils.permutations.metrics._fairness_permutations import unfairness_permutations
 from ..utils.permutations.metrics._performance_permutations import performance_permutations
 
@@ -139,9 +139,9 @@ def arrow_plot_permutations(unfs_list, performance_list):
 
 
 def arrow_plot_from_scratch(sensitive_features_calib, sensitive_features_test, y_calib, y_test, y_true_test, epsilon=None, test_size=0.3, permutation=True, metric=mean_squared_error):
-    permut_y_fair_dict = calculate_perm_wst(
+    permut_y_fair_dict = calculate_perm_wasserstein(
         y_calib, sensitive_features_calib, y_test, sensitive_features_test, epsilon=epsilon)
-    all_combs_sensitive_features_test = permutations_cols(
+    all_combs_sensitive_features_test = permutations_columns(
         sensitive_features_test)
     unfs_list = unfairness_permutations(
         permut_y_fair_dict, all_combs_sensitive_features_test)
