@@ -94,7 +94,7 @@ def fair_arrow_plot(unfs_dict, performance_dict, permutations=False, base_model=
     ax.legend(loc="best")
 
 
-def fair_arrow_plot_permutations(unfs_list, performance_list):
+def fair_multiple_arrow_plot(unfs_list, performance_list):
     """
     Plot arrows representing the fairness-performance ccombinations step by step (by sensitive attribute) to reach fairness for all permutations
     (order of sensitive variables for which fairness is calculated).
@@ -189,4 +189,4 @@ def custom_fair_arrow_plot(sensitive_features_calib, sensitive_features_test, y_
         permut_y_fair_dict, all_combs_sensitive_features_test)
     performance_list = performance_permutations(
         y_true_test, permut_y_fair_dict, metric=metric)
-    fair_arrow_plot_permutations(unfs_list, performance_list)
+    fair_multiple_arrow_plot(unfs_list, performance_list)
