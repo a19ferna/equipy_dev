@@ -4,7 +4,7 @@ import numpy as np
 from ..utils.checkers import _check_epsilon, _check_epsilon_size, _check_mod, _check_shape, _check_nb_observations
 from  ._base import BaseHelper
 
-class Wasserstein(BaseHelper):
+class FairWasserstein(BaseHelper):
     """
     Class implementing Wasserstein distance-based fairness adjustment for binary classification tasks.
 
@@ -64,7 +64,7 @@ class Wasserstein(BaseHelper):
 
         Examples
         --------
-        >>> wasserstein = Wasserstein(sigma=0.001)
+        >>> wasserstein = FairWasserstein(sigma=0.001)
         >>> y = np.array([0.0, 1.0, 1.0, 0.0])
         >>> sensitive_feature = np.array([1, 2, 0, 2])
         >>> wasserstein.fit(y, sensitive_feature)
@@ -110,7 +110,7 @@ class Wasserstein(BaseHelper):
         --------
         >>> y = np.array([0.05, 0.08, 0.9, 0.9, 0.01, 0.88])
         >>> sensitive_feature = np.array([1, 3, 2, 3, 1, 2])
-        >>> wasserstein = Wasserstein(sigma=0.001)
+        >>> wasserstein = FairWasserstein(sigma=0.001)
         >>> wasserstein.fit(y, sensitive_feature)
         >>> y = np.array([0.01, 0.99, 0.98, 0.04])
         >>> sensitive_feature = np.array([3, 1, 2, 3])
@@ -127,9 +127,9 @@ class Wasserstein(BaseHelper):
         return (1-epsilon)*y_fair + epsilon*y
 ""
 
-class MultiWasserStein():
+class MultiWasserstein():
     """
-    Class extending Wasserstein for multi-sensitive attribute fairness adjustment.
+    Class extending FairWasserstein for multi-sensitive attribute fairness adjustment.
 
     Parameters
     ----------
@@ -218,7 +218,7 @@ class MultiWasserStein():
             sensitive_features = np.reshape(sensitive_features, (len(sensitive_features),1))
 
         for i, sens in enumerate(sensitive_features.T):
-            wasserstein_instance = Wasserstein(sigma=self.sigma)
+            wasserstein_instance = FairWasserstein(sigma=self.sigma)
             if i == 0:
                 y_inter = y
             
@@ -282,7 +282,7 @@ class MultiWasserStein():
         self.y_fair['Base model'] = y
 
         for i, sens in enumerate(sensitive_features.T):
-            wasserstein_instance = Wasserstein(sigma=self.sigma)
+            wasserstein_instance = FairWasserstein(sigma=self.sigma)
             if i == 0:
                 y_inter = y
             wasserstein_instance.modalities_calib = self.modalities_calib_all[

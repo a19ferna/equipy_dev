@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 
-from ...fairness._wasserstein import MultiWasserStein
+from ...fairness._wasserstein import MultiWasserstein
 
 
 def permutations_cols(sensitive_features):
@@ -92,7 +92,7 @@ def calculate_perm_wst(y_calib, sensitive_features_calib, y_test, sensitive_feat
 
     store_dict = {}
     for key in all_perm_calib:
-        wst = MultiWasserStein()
+        wst = MultiWasserstein()
         wst.fit(y_calib, np.array(all_perm_calib[key]))
         if epsilon == None:
             wst.transform(y_test, np.array(

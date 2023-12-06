@@ -1,1 +1,1 @@
-from ._wasserstein import MultiWasserStein
+from ._wasserstein import MultiWasserstein

@@ -1,10 +1,5 @@
-from jsonschema import draft201909_format_checker
 import numpy as np
 import warnings
-import pandas as pd
-
-from sklearn.preprocessing import StandardScaler
-
 
 def _check_metric(y):
     """
