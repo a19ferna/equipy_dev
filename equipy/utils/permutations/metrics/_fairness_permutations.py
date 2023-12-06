@@ -31,7 +31,7 @@ def unfairness_permutations(permut_y_fair_dict, all_combs_sensitive_features):
      {'sens_var_0': 46.0, 'sens_var_1': 26.0, 'sens_var_2': 14.0}]
     """
     unfs_list = []
-    for key in permut_y_fair_dict.keys():
+    for key, value in permut_y_fair_dict.items():
         unfs_list.append(unfairness_dict(
-            permut_y_fair_dict[key], np.array(all_combs_sensitive_features[key])))
+            value, np.array(all_combs_sensitive_features[key])))
     return unfs_list

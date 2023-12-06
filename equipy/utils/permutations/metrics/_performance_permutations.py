@@ -32,7 +32,7 @@ def performance_permutations(y_true, permut_y_fair_dict, metric=mean_squared_err
      {'Base model': 8.666666666666666, 'sens_var_2': 142.0, 'sens_var_1': 282.0}]
     """
     performance_list = []
-    for key in permut_y_fair_dict.keys():
+    for value in permut_y_fair_dict.values():
         performance_list.append(performance_dict(
-            y_true, permut_y_fair_dict[key], metric))
+            y_true, value, metric))
     return performance_list

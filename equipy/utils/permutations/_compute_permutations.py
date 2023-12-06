@@ -94,7 +94,7 @@ def calculate_perm_wasserstein(y_calib, sensitive_features_calib, y_test, sensit
     for key in all_perm_calib:
         wst = MultiWasserstein()
         wst.fit(y_calib, np.array(all_perm_calib[key]))
-        if epsilon == None:
+        if epsilon is None:
             wst.transform(y_test, np.array(
                 all_perm_test[key]))
         else:
