@@ -151,7 +151,7 @@ def _values_to_distance(values):
     return distance
 
 
-def waterfall_plot(unfs_exact, unfs_approx=None):
+def fair_waterfall_plot(unfs_exact, unfs_approx=None):
     """
     Generate a waterfall plot illustrating the sequential fairness in a model.
 
