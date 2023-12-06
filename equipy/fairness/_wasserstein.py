@@ -1,6 +1,4 @@
-from  ._base import BaseHelper
 import numpy as np
-
 from ..utils.checkers import _check_epsilon, _check_epsilon_size, _check_mod, _check_shape, _check_nb_observations
 from  ._base import BaseHelper
 

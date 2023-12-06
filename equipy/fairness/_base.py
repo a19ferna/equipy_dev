@@ -1,8 +1,6 @@
 from statsmodels.distributions.empirical_distribution import ECDF
 import numpy as np
-
 from ..metrics._fairness_metrics import EQF
-
 
 class BaseHelper():
     """
